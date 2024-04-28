@@ -61,22 +61,22 @@ contract CredentialHelper is CredentialFactory {
 
     function changeName(
         uint _credentialId,
-        string calldata _newName
-    ) external onlyIssuerOf(_credentialId) {
+        string memory _newName
+    ) private onlyIssuerOf(_credentialId) {
         credentials[_credentialId].name = _newName;
     }
 
     function changeCredentialType(
         uint _credentialId,
         CredentialType _newType
-    ) external onlyIssuerOf(_credentialId) onlyValidCredentialType(_newType) {
+    ) private onlyIssuerOf(_credentialId) onlyValidCredentialType(_newType) {
         credentials[_credentialId].credentialType = _newType;
     }
 
     function changeDateIssued(
         uint _credentialId,
         uint _newDateIssued
-    ) external onlyIssuerOf(_credentialId) {
+    ) private onlyIssuerOf(_credentialId) {
         credentials[_credentialId].dateIssued = _newDateIssued;
     }
 
@@ -84,7 +84,7 @@ contract CredentialHelper is CredentialFactory {
         uint _credentialId,
         uint _newExpirationDate
     )
-        external
+        private
         onlyIssuerOf(_credentialId)
         onlyNonExpiredCredential(_newExpirationDate)
     {
@@ -93,16 +93,42 @@ contract CredentialHelper is CredentialFactory {
 
     function changeDescription(
         uint _credentialId,
-        string calldata _newDescription
-    ) external onlyIssuerOf(_credentialId) {
+        string memory _newDescription
+    ) private onlyIssuerOf(_credentialId) {
         credentials[_credentialId].description = _newDescription;
     }
 
     function changeCredentialUrl(
         uint _credentialId,
+        string memory _newCredentialUrl
+    ) private onlyIssuerOf(_credentialId) {
+        credentials[_credentialId].credentialUrl = _newCredentialUrl;
+    }
+
+    function changeCredential(
+        uint _credentialId,
+        string calldata _newName,
+        CredentialType _newType,
+        uint _newDateIssued,
+        uint _newExpirationDate,
+        string calldata _newDescription,
         string calldata _newCredentialUrl
     ) external onlyIssuerOf(_credentialId) {
-        credentials[_credentialId].credentialUrl = _newCredentialUrl;
+        changeName(_credentialId, _newName);
+        changeCredentialType(_credentialId, _newType);
+        changeDateIssued(_credentialId, _newDateIssued);
+        changeExpirationDate(_credentialId, _newExpirationDate);
+        changeDescription(_credentialId, _newDescription);
+        changeCredentialUrl(_credentialId, _newCredentialUrl);
+        emit CredentialChanged(
+            _credentialId,
+            _newName,
+            _newType,
+            _newDateIssued,
+            _newExpirationDate,
+            _newDescription,
+            _newCredentialUrl
+        );
     }
 
     /**

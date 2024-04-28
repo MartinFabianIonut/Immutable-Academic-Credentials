@@ -34,6 +34,16 @@ contract CredentialFactory is Ownable {
         CredentialRank newRank
     );
 
+    event CredentialChanged(
+        uint credentialId,
+        string name,
+        CredentialType credentialType,
+        uint dateIssued,
+        uint expirationDate,
+        string description,
+        string credentialUrl
+    );
+
     struct Credential {
         string name; // Name of the credential
         CredentialType credentialType; // Type of the credential
