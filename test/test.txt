@@ -1,0 +1,135 @@
+ context("who can change the rank of a credential", async () => {
+        it("the issuer should be able to change the rank of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeRank(credentialId, { from: alice });
+            assert.equal(result.logs[0].args.newRank, 1);
+        });
+        it("the issuer should be able to change the rank of a credential to any rank", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.setRankByIssuer(credentialId, 3, { from: alice });
+            assert.equal(result.logs[0].args.newRank, 3);
+        });
+        it("the issuer should not be able to change the rank of a credential that does not exist", async () => {
+            await utils.shouldThrow(contractInstance.setRankByIssuer(1, 1, { from: alice }));
+        });
+        it("the issuer should not be able to change the rank of a credential to a rank that is out of bounds (>= 4)", async () => {
+            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.setRankByIssuer(credentialId, 4, { from: alice }));
+        });
+        it("the owner should be able to change the rank of a credential to a higher one", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await contractInstance.transferFrom(alice, bob, credentialId, { from: alice });
+            const newOwner = await contractInstance.ownerOf(credentialId);
+            const { ethers } = require("ethers");
+            const rankingFee = ethers.utils.parseEther("0.002");
+            await contractInstance.changeRank(credentialId, { from: newOwner, value: rankingFee });
+            result = await contractInstance.changeRank(credentialId, { from: newOwner, value: rankingFee });
+            assert.equal(result.logs[0].args.newRank, 2);
+        });
+    });
+    context("with the single-step transfer scenario", async () => {
+        it("should transfer a credential", async () => {
+            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await contractInstance.transferFrom(alice, bob, credentialId, { from: alice });
+            const newOwner = await contractInstance.ownerOf(credentialId);
+            assert.equal(newOwner, bob);
+        });
+        it("should not be able to transfer a credential if not the issuer or approved", async () => {
+            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.transferFrom(alice, bob, credentialId, { from: bob }));
+        });
+    });
+    context("with the two-step transfer scenario", async () => {
+        it("should approve and then transfer a credential when the approved address calls transferFrom", async () => {
+            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await contractInstance.approve(bob, credentialId, { from: alice });
+            await contractInstance.transferFrom(alice, bob, credentialId, { from: bob });
+            const newOwner = await contractInstance.ownerOf(credentialId);
+            assert.equal(newOwner, bob);
+        })
+        it("should approve and then transfer a credential when the owner calls transferFrom", async () => {
+            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await contractInstance.approve(bob, credentialId, { from: alice });
+            await contractInstance.transferFrom(alice, bob, credentialId, { from: alice });
+            const newOwner = await contractInstance.ownerOf(credentialId);
+            assert.equal(newOwner, bob);
+        })
+    });
+    context("change the name of a credential", async () => {
+        it("the issuer should be able to change the name of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeCredential(credentialId, "New Name", _, _, _, _, _, { from: alice });
+            assert.equal(result.logs[0].args.newName, "New Name");
+        });
+        it("the issuer should not be able to change the name of a credential with not enough parameters", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeCredential(credentialId, "New Name", { from: alice }));
+        });
+        if ("someone else should not be able to change the name of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeCredential(credentialId, "New Name", { from: bob }));
+        });
+    });
+    context("change the description of a credential", async () => {
+        it("the issuer should be able to change the description of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeDescription(credentialId, "New Description", { from: alice });
+            assert.equal(result.logs[0].args.newDescription, "New Description");
+        });
+        if ("someone else should not be able to change the description of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeDescription(credentialId, "New Description", { from: bob }));
+        });
+    });
+    context("change the URL of a credential", async () => {
+        it("the issuer should be able to change the URL of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeUrl(credentialId, "New URL", { from: alice });
+            assert.equal(result.logs[0].args.newUrl, "New URL");
+        });
+        if ("someone else should not be able to change the URL of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeUrl(credentialId, "New URL", { from: bob }));
+        });
+    });
+    context("change the date of issue of a credential", async () => {
+        it("the issuer should be able to change the date of issue of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeDateOfIssue(credentialId, datesOfIssue[1], { from: alice });
+            assert.equal(result.logs[0].args.newDateOfIssue, datesOfIssue[1]);
+        });
+        if ("someone else should not be able to change the date of issue of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeDateOfIssue(credentialId, datesOfIssue[1], { from: bob }));
+        });
+    });
+    context("change the expiration date of a credential", async () => {
+        it("the issuer should be able to change the expiration date of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            result = await contractInstance.changeExpirationDate(credentialId, expirationDates[1], { from: alice });
+            assert.equal(result.logs[0].args.newExpirationDate, expirationDates[1]);
+        });
+        if ("someone else should not be able to change the expiration date of a credential", async () => {
+            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
+            const credentialId = result.logs[0].args.credentialId.toNumber();
+            await utils.shouldThrow(contractInstance.changeExpirationDate(credentialId, expirationDates[1], { from: bob }));
+        });
+    });

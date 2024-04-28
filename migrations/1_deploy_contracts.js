@@ -1,4 +1,4 @@
-var CryptoZombies = artifacts.require("./CryptoZombies.sol");
+var AcademicCredentials = artifacts.require("./AcademicCredentials.sol");
 module.exports = function (deployer) {
-  deployer.deploy(CryptoZombies);
+  deployer.deploy(AcademicCredentials);
 };
