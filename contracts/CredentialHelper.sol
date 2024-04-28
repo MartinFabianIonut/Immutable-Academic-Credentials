@@ -201,6 +201,25 @@ contract CredentialHelper is CredentialFactory {
     }
 
     /**
+     * @dev This function returns all the credentials issued by a given address.
+     * @param _issuer The address to query the credentials of.
+     * @return An array of credential IDs issued by the address.
+     */
+    function getCredentialsByIssuer(
+        address _issuer
+    ) external view returns (uint[] memory) {
+        uint[] memory result = new uint[](issuerCredentialCount[_issuer]);
+        uint counter = 0;
+        for (uint i = 0; i < credentials.length; i++) {
+            if (credentialToIssuer[i] == _issuer) {
+                result[counter] = i;
+                counter++;
+            }
+        }
+        return result;
+    }
+
+    /**
      * @dev This function returns all the credentials ranking types.
      * @return An array of credential ranking types.
      */

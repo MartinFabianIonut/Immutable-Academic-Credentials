@@ -25,7 +25,8 @@ contract CredentialFactory is Ownable {
     event NewCredential(
         uint credentialId,
         string name,
-        CredentialType credentialType
+        CredentialType credentialType,
+        address issuer
     );
 
     event RankChanged(
@@ -59,6 +60,7 @@ contract CredentialFactory is Ownable {
     mapping(uint => address) public credentialToOwner; // Mapping from credential ID to owner address
     mapping(uint => address) public credentialToIssuer; // Mapping from credential ID to issuer address
     mapping(address => uint16) ownerCredentialCount; // Mapping from owner address to count of owned credentials
+    mapping(address => uint16) issuerCredentialCount; // Mapping from owner address to count of owned credentials
 
     // Mapping for count of credential types owned by each address
     mapping(address => mapping(uint16 => uint16))
@@ -88,13 +90,10 @@ contract CredentialFactory is Ownable {
         credentials.push(credential);
         uint id = credentials.length - 1;
         credentialToIssuer[id] = msg.sender;
-        ownerCredentialCount[msg.sender] = ownerCredentialCount[msg.sender].add(
+        issuerCredentialCount[msg.sender] = issuerCredentialCount[msg.sender].add(
             1
         );
-        ownerCredentialTypeCount[msg.sender][
-            uint16(_type)
-        ] = ownerCredentialTypeCount[msg.sender][uint16(_type)].add(1);
-        emit NewCredential(id, _name, _type);
+        emit NewCredential(id, _name, _type, msg.sender);
     }
 
     // Modifier to check if the credential type is valid
