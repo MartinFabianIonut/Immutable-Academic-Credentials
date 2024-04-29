@@ -21,16 +21,131 @@
     ></script>
     <script src="AcademicCredentialsAddress.js"></script>
     <script src="utils.js"></script>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="page center-content-flex">
+      <div class="navigation">
+        <div class="title">
+          <h1><a href="index.html" id="home">Academic Credentials</a></h1>
+          <h2>Issuer</h2>
+        </div>
+        <button class="create-credential-btn" onclick="handleShowForm()">
+          Create Credential
+        </button>
+        <div id="credentials"></div>
+        <div>
+          <ul id="owners"></ul>
+        </div>
+      </div>
+      <div class="content center-content-flex">
+        <form
+          id="credentialForm"
+          class="creade-credential-form general-form center-content-flex"
+        >
+          <label>
+            Name:
+            <input type="text" id="name" placeholder="John Dawn" required />
+          </label>
+          <label>
+            Date of Issue:
+            <input type="date" id="dateOfIssue" required />
+          </label>
+          <label>
+            Expiration Date:
+            <input type="date" id="expirationDate" required />
+          </label>
+          <label>
+            Description:
+            <input
+              type="text"
+              id="description"
+              placeholder="Computer Science, Literature"
+              required
+            />
+          </label>
+          <label>
+            Credential URL:
+            <input
+              type="text"
+              id="credentialUrl"
+              placeholder="www.example.com"
+              required
+            />
+          </label>
+          <label>
+            Credential Type:
+            <div class="credential-types">
+              <div class="credential-type cursor-pointer">
+                <input
+                  type="radio"
+                  id="Certificate"
+                  value="0"
+                  name="credentialType"
+                  class="cursor-pointer"
+                  checked
+                />
+                <label for="Certificate" class="cursor-pointer"
+                  >Certificate</label
+                >
+              </div>
+              <div class="credential-type cursor-pointer">
+                <input
+                  type="radio"
+                  id="Degree"
+                  value="1"
+                  name="credentialType"
+                  class="cursor-pointer"
+                />
+                <label for="Degree" class="cursor-pointer">Degree</label>
+              </div>
+              <div class="credential-type cursor-pointer">
+                <input
+                  type="radio"
+                  id="Achievement"
+                  value="2"
+                  name="credentialType"
+                  class="cursor-pointer"
+                />
+                <label for="Achievement" class="cursor-pointer"
+                  >Achievement</label
+                >
+              </div>
+            </div>
+          </label>
+          <button
+            type="submit"
+            class="form-submit-btn create-credential-btn center-content-flex"
+          >
+            Create Credential
+          </button>
+        </form>
+        <div id="txStatus"></div>
+      </div>
+
+      <!-- <button
+        onclick="getCredentialsByIssuer(userAccount).then(displayCredentials)"
+      >
+        Get Credentials
+      </button> -->
+    </div>
+
     <script>
+      userType = "issuer";
+
+      function handleShowForm() {
+        document.getElementById("credentialForm").classList.toggle("show");
+      }
+
       function handleSubmit() {
         const name = document.getElementById("name").value;
         const dateOfIssue = document.getElementById("dateOfIssue").value;
         const expirationDate = document.getElementById("expirationDate").value;
         const description = document.getElementById("description").value;
         const credentialUrl = document.getElementById("credentialUrl").value;
-        const credentialType = document.getElementById("credentialType").value;
+        const credentialType = document.querySelector(
+          'input[name="credentialType"]:checked'
+        ).value;
 
         createCredential(
           name,
@@ -41,66 +156,18 @@
           credentialType
         );
       }
-    </script>
-
-    <div className="app">
-      <h1>Create Credential</h1>
-      <form id="credentialForm">
-        <label>
-          Name:
-          <input type="text" id="name" />
-        </label>
-        <label>
-          Date of Issue:
-          <input type="date" id="dateOfIssue" />
-        </label>
-        <label>
-          Expiration Date:
-          <input type="date" id="expirationDate" />
-        </label>
-        <label>
-          Description:
-          <input type="text" id="description" />
-        </label>
-        <label>
-          Credential URL:
-          <input type="text" id="credentialUrl" />
-        </label>
-        <label>
-          Credential Type:
-          <select id="credentialType">
-            <option value="0">Certificate</option>
-            <option value="1">Degree</option>
-            <option value="2">Achievement</option>
-          </select>
-        </label>
-        <button type="submit">Create Credential</button>
-      </form>
-      <button
-        onclick="getCredentialsByIssuer(userAccount).then(displayCredentials)"
-      >
-        Get Credentials
-      </button>
-      <div>
-        <div id="txStatus"></div>
-        <div id="credentials"></div>
-      </div>
-      <div>
-        <ul id="owners"></ul>
-      </div>
-    </div>
-
-    <script>
-      var credentials;
-      var userAccount;
       var ownersAccounts;
 
       document
         .getElementById("credentialForm")
         .addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent form submission
-          handleSubmit(); // Call the handleSubmit function
+          event.preventDefault();
+          handleSubmit();
         });
+
+      document.getElementById("expirationDate").min = new Date()
+        .toISOString()
+        .split("T")[0];
 
       function transfer(account) {
         $("#txStatus").text(
@@ -118,64 +185,6 @@
           .on("error", function (error) {
             $("#txStatus").text(error);
           });
-      }
-
-      async function startApp() {
-        var credentialAddress = CREDENTIAL_ADDRESS;
-        credentials = new web3js.eth.Contract(
-          AcademicCredentialABI,
-          credentialAddress
-        );
-
-        if (window.ethereum) {
-          await ethereum.enable();
-        }
-
-        function getAccounts(callback) {
-          web3.eth.getAccounts((error, result) => {
-            if (error) {
-              console.log(error);
-            } else {
-              callback(result);
-            }
-          });
-        }
-
-        getAccounts(function (result) {
-          userAccount = result[0];
-          ownersAccounts = result.slice(1);
-          for (const account of ownersAccounts) {
-            $("#owners").append(
-              `<li>Owner: ${account} <button onclick="transfer('${account}')">Transfer</button></li>`
-            );
-          }
-          getCredentialsByIssuer(userAccount).then(displayCredentials);
-        });
-
-        // Listen for account changes using MetaMask
-        window.ethereum.on("accountsChanged", function (accounts) {
-          userAccount = accounts[0]; // Update the user's account
-          console.log("User Account changed:", userAccount);
-          // Call a function to update the UI with the new account
-          getCredentialsByIssuer(userAccount).then(displayCredentials);
-        });
-
-        credentials.events
-          .NewCredential({ filter: { issuer: userAccount } })
-          .on("data", function (event) {
-            let data = event.returnValues;
-            getCredentialsByIssuer(userAccount).then(displayCredentials);
-          })
-          .on("error", console.error);
-
-        credentials.events
-          .Transfer({ filter: { _from: userAccount } })
-          .on("data", function (event) {
-            let data = event.returnValues;
-            // The current user just received a zombie!
-            getCredentialsByIssuer(userAccount).then(displayCredentials);
-          })
-          .on("error", console.error);
       }
 
       function dateToBigInt(date) {
@@ -214,78 +223,18 @@
           .send({ from: userAccount })
           .on("receipt", function (receipt) {
             $("#txStatus").text("Successfully created " + name + "!");
-            // Transaction was accepted into the blockchain, let's redraw the UI
             getCredentialsByIssuer(userAccount).then(displayCredentials);
           })
           .on("error", function (error) {
-            // Do something to alert the user their transaction has failed
             $("#txStatus").text(error);
           });
-      }
-
-      function intToDate(timestamp) {
-        return new Date(timestamp * 1000).toISOString().split("T")[0];
-      }
-
-      function typeToString(type) {
-        switch (type) {
-          case "0":
-            return "Certificate";
-          case "1":
-            return "Degree";
-          case "2":
-            return "Achievement";
-          default:
-            return "Unknown";
-        }
-      }
-
-      function displayCredentials(ids) {
-        console.log(ids);
-        $("#credentials").empty();
-        for (const id of ids) {
-          // Look up credential details from our contract. Returns a `credential` object
-          getCredentialDetails(id).then(function (credential) {
-            // Using ES6's "template literals" to inject variables into the HTML.
-            // Append each one to our #credentials div
-            $("#credentials").append(`<div class="credential">
-							<ul>
-								<li>Name: ${credential.name}</li>
-								<li>Date of Issue: ${intToDate(credential.dateIssued)}</li>
-								<li>Expiration Date: ${intToDate(credential.expirationDate)}</li>
-								<li>Description: ${credential.description}</li>
-								<li>Credential URL: <a href="${
-                  credential.credentialUrl
-                }">${credential.credentialUrl}</a></li>
-								<li>Credential Type: ${typeToString(credential.credentialType)}</li>
-							</ul>
-							</div>`);
-          });
-        }
-      }
-
-      function getCredentialDetails(id) {
-        return credentials.methods.credentials(id).call();
       }
 
       function getCredentialsByIssuer(owner) {
         return credentials.methods.getCredentialsByIssuer(owner).call();
       }
 
-      window.addEventListener("load", function () {
-        // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-        if (typeof web3 !== "undefined") {
-          // Use Mist/MetaMask's provider
-          web3js = new Web3(web3.currentProvider);
-        } else {
-          // Handle the case where the user doesn't have Metamask installed
-          // Probably show them a message prompting them to install Metamask
-          console.log("No web3? You should consider trying MetaMask!");
-        }
-
-        // Now you can start your app & access web3 freely:
-        startApp();
-      });
+      loadApp();
     </script>
   </body>
 </html>

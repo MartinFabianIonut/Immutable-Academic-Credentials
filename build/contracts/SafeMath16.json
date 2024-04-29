@@ -2571,7 +2571,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-04-28T19:06:22.383Z",
+  "updatedAt": "2024-04-29T11:59:25.666Z",
   "devdoc": {
     "details": "SafeMath library implemented for uint16\r",
     "methods": {},

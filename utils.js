@@ -1,5 +1,6 @@
 var credentials;
 var userAccount;
+var userType;
 
 async function startApp() {
   var credentialAddress = CREDENTIAL_ADDRESS;
@@ -24,21 +25,37 @@ async function startApp() {
 
   getAccounts(function (result) {
     userAccount = result[0];
-    console.log("hello");
-    getCredentialsByOwner(userAccount).then(displayCredentials);
+    if (userType == "issuer") {
+      ownersAccounts = result.slice(1);
+      for (const account of ownersAccounts) {
+        $("#owners").append(
+          `<li>Owner: ${account} <button onclick="transfer('${account}')">Transfer</button></li>`
+        );
+      }
+      getCredentialsByIssuer(userAccount).then(displayCredentials);
+    } else {
+      getCredentialsByOwner(userAccount).then(displayCredentials);
+    }
   });
 
   window.ethereum.on("accountsChanged", function (accounts) {
     userAccount = accounts[0];
-    console.log("User Account changed:", userAccount);
-    getCredentialsByOwner(userAccount).then(displayCredentials);
+    if (userType == "issuer") {
+      getCredentialsByIssuer(userAccount).then(displayCredentials);
+    } else {
+      getCredentialsByOwner(userAccount).then(displayCredentials);
+    }
   });
 
   credentials.events
     .NewCredential({ filter: { issuer: userAccount } })
     .on("data", function (event) {
       let data = event.returnValues;
-      getCredentialsByOwner(userAccount).then(displayCredentials);
+      if (userType == "issuer") {
+        getCredentialsByIssuer(userAccount).then(displayCredentials);
+      } else {
+        getCredentialsByOwner(userAccount).then(displayCredentials);
+      }
     })
     .on("error", console.error);
 
@@ -46,7 +63,11 @@ async function startApp() {
     .Transfer({ filter: { _from: userAccount } })
     .on("data", function (event) {
       let data = event.returnValues;
-      getCredentialsByOwner(userAccount).then(displayCredentials);
+      if (userType == "issuer") {
+        getCredentialsByIssuer(userAccount).then(displayCredentials);
+      } else {
+        getCredentialsByOwner(userAccount).then(displayCredentials);
+      }
     })
     .on("error", console.error);
 }
@@ -56,28 +77,25 @@ function displayCredentials(ids) {
   $("#credentials").empty();
   for (const id of ids) {
     getCredentialDetails(id).then(function (credential) {
-      $("#credentials").append(`<div class="credential">
-							<ul>
-								<li>Name: ${credential.name}</li>
-								<li>Date of Issue: ${intToDate(credential.dateIssued)}</li>
-								<li>Expiration Date: ${intToDate(credential.expirationDate)}</li>
-								<li>Description: ${credential.description}</li>
-								<li>Credential URL: <a href="${
-                  credential.credentialUrl
-                }">${credential.credentialUrl}</a></li>
-								<li>Credential Type: ${typeToString(credential.credentialType)}</li>
-							</ul>
-							</div>`);
+      $("#credentials").append(
+        `<div class="credential">${credential.name}</div>`
+      );
+      //             <ul>
+      // 				<li>Name: ${credential.name}</li>
+      // 				<li>Date of Issue: ${intToDate(credential.dateIssued)}</li>
+      // 				<li>Expiration Date: ${intToDate(credential.expirationDate)}</li>
+      // 				<li>Description: ${credential.description}</li>
+      // 				<li>Credential URL: <a href="${
+      //   credential.credentialUrl
+      // }">${credential.credentialUrl}</a></li>
+      // 				<li>Credential Type: ${typeToString(credential.credentialType)}</li>
+      // 			</ul>
     });
   }
 }
 
 function getCredentialDetails(id) {
   return credentials.methods.credentials(id).call();
-}
-
-function getCredentialsByOwner(owner) {
-  return credentials.methods.getCredentialsByOwner(owner).call();
 }
 
 function intToDate(timestamp) {
@@ -102,8 +120,6 @@ function loadApp() {
     if (typeof web3 !== "undefined") {
       web3js = new Web3(web3.currentProvider);
     } else {
-      // Handle the case where the user doesn't have Metamask installed
-      // Probably show them a message prompting them to install Metamask
       console.log("No web3? You should consider trying MetaMask!");
     }
 

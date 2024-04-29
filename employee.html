@@ -24,8 +24,24 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="credentials"></div>
+    <div class="page center-content-flex">
+      <div class="navigation">
+        <div class="title">
+          <h1><a href="index.html" id="home">Academic Credentials</a></h1>
+          <h2>Employee</h2>
+        </div>
+        <div id="credentials"></div>
+      </div>
+      <div class="content"></div>
+    </div>
+
     <script>
+      userType = "employee";
+
+      function getCredentialsByOwner(owner) {
+        return credentials.methods.getCredentialsByOwner(owner).call();
+      }
+
       loadApp();
     </script>
   </body>

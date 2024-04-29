@@ -5,15 +5,24 @@ body {
   background-color: #161616;
 }
 
+a {
+  text-decoration: none;
+}
+
 .center-content-flex {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.role-page {
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.page {
   color: white;
-  height: 100vh;
+  height: calc(100vh - 25px);
+  padding-top: 25px;
 }
 
 .role-form {
@@ -22,6 +31,9 @@ body {
   border-radius: 15px;
   border: 1px dashed white;
   text-align: center;
+}
+
+.general-form {
   animation: moveShadow 2s infinite linear;
 }
 
@@ -36,6 +48,7 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 }
+
 .role-options {
   display: flex;
   flex-direction: column;
@@ -45,7 +58,6 @@ body {
 
 .role {
   font-size: 1.2rem;
-  text-decoration: none;
   color: #aaa;
   padding: 15px 0;
   margin: 8px 0;
@@ -57,4 +69,117 @@ body {
   background-color: #333;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   color: white;
+}
+
+#home {
+  color: white;
+  margin-right: 25px;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+}
+
+.navigation {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  width: 35%;
+  height: 100%;
+  margin-left: 25px;
+}
+
+.content {
+  width: 65%;
+  height: 100%;
+}
+
+.creade-credential-form {
+  display: none;
+  width: 50%;
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px dashed white;
+}
+
+.creade-credential-form > label {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 15px;
+  width: 75%;
+}
+
+.creade-credential-form > label > input {
+  padding: 10px;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  background-color: #333;
+  color: white;
+}
+
+.creade-credential-form > label > input:not([type="radio"]):focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.creade-credential-form > label > input::placeholder {
+  color: #aaa;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  cursor: pointer;
+}
+
+.form-submit-btn {
+  margin-top: 25px;
+  width: 40%;
+}
+
+.show {
+  display: flex;
+  flex-direction: column;
+}
+
+.credential-types {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.credential-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.credential-type > input {
+  margin: 0;
+  accent-color: black;
+}
+
+.credential-type > label {
+  padding-left: 10px;
+}
+
+.create-credential-btn {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid #333;
+}
+
+.create-credential-btn:hover {
+  background-color: #555;
+  cursor: pointer;
 }
