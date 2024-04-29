@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background-color: #161616;
+}
+
+.center-content-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.role-page {
+  color: white;
+  height: 100vh;
+}
+
+.role-form {
+  flex-direction: column;
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px dashed white;
+  text-align: center;
+  animation: moveShadow 2s infinite linear;
+}
+
+@keyframes moveShadow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+.role-options {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.role {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #aaa;
+  padding: 15px 0;
+  margin: 8px 0;
+  border: 1px solid #aaa;
+  border-radius: 50px;
+}
+
+.role:hover {
+  background-color: #333;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  color: white;
+}
