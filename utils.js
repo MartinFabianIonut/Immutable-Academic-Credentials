@@ -28,8 +28,8 @@ async function startApp() {
     if (userType == "issuer") {
       ownersAccounts = result.slice(1);
       for (const account of ownersAccounts) {
-        $("#owners").append(
-          `<li>Owner: ${account} <button onclick="transfer('${account}')">Transfer</button></li>`
+        $("#employees").append(
+          `<option value="${account}">${account}</option>`
         );
       }
       getCredentialsByIssuer(userAccount).then(displayCredentials);
@@ -73,25 +73,50 @@ async function startApp() {
 }
 
 function displayCredentials(ids) {
-  console.log(ids);
   $("#credentials").empty();
   for (const id of ids) {
     getCredentialDetails(id).then(function (credential) {
       $("#credentials").append(
-        `<div class="credential">${credential.name}</div>`
+        `<div id="${id}" class="credential cursor-pointer" onClick="handleViewCredential(${id})">${
+          credential.name
+        } ${intToDate(credential.dateIssued)}</div>`
       );
-      //             <ul>
-      // 				<li>Name: ${credential.name}</li>
-      // 				<li>Date of Issue: ${intToDate(credential.dateIssued)}</li>
-      // 				<li>Expiration Date: ${intToDate(credential.expirationDate)}</li>
-      // 				<li>Description: ${credential.description}</li>
-      // 				<li>Credential URL: <a href="${
-      //   credential.credentialUrl
-      // }">${credential.credentialUrl}</a></li>
-      // 				<li>Credential Type: ${typeToString(credential.credentialType)}</li>
-      // 			</ul>
+      if (userType == "issuer") {
+        $("#credentials-transfer").append(
+          `<option value="${id}">${credential.name} ${intToDate(
+            credential.dateIssued
+          )}</option>`
+        );
+      }
     });
   }
+}
+
+function handleViewCredential(id) {
+  document.querySelectorAll(".selected").forEach((element) => {
+    element.classList.remove("selected");
+  });
+  document.getElementById(id).classList.add("selected");
+  getCredentialDetails(id).then(function (credential) {
+    $("#credential-details").empty();
+    $("#credential-details").append(
+      `<div>Name: ${credential.name}</div>
+                    <div>Date of Issue: ${intToDate(
+                      credential.dateIssued
+                    )}</div>
+                    <div>Expiration Date: ${intToDate(
+                      credential.expirationDate
+                    )}</div>
+                    <div>Description: ${credential.description}</div>
+                    <div>Credential URL: <a style="color:white; text-decoration: underline" href="${
+                      credential.credentialUrl
+                    }">${credential.credentialUrl}</a></div>
+                    <div>Credential Type: ${typeToString(
+                      credential.credentialType
+                    )}</div>
+                `
+    );
+  });
 }
 
 function getCredentialDetails(id) {
@@ -115,7 +140,7 @@ function typeToString(type) {
   }
 }
 
-function loadApp() {
+async function loadApp() {
   window.addEventListener("load", function () {
     if (typeof web3 !== "undefined") {
       web3js = new Web3(web3.currentProvider);

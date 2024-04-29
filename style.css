@@ -19,7 +19,12 @@ a {
   cursor: pointer;
 }
 
+.show {
+  display: flex !important;
+}
+
 .page {
+  flex-direction: column;
   color: white;
   height: calc(100vh - 25px);
   padding-top: 25px;
@@ -84,27 +89,47 @@ a {
 .navigation {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start;
-  flex-direction: column;
-  width: 35%;
-  height: 100%;
+  align-items: center;
   margin-left: 25px;
 }
 
-.content {
-  width: 65%;
-  height: 100%;
+.navigation-buttons {
+  margin-left: 15%;
 }
 
-.creade-credential-form {
-  display: none;
-  width: 50%;
+.btn {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid #aaa;
+}
+
+.btn:hover {
+  background-color: #555;
+  cursor: pointer;
+}
+
+.navigation-btn:not(:first-child) {
+  margin-left: 15px;
+}
+
+.nav-btn-active {
+  background-color: #555;
+}
+
+.content {
+  margin-top: 3%;
+}
+
+.transfer-credential-form {
+  flex-direction: column;
   padding: 25px;
   border-radius: 15px;
   border: 1px dashed white;
 }
 
-.creade-credential-form > label {
+.transfer-credential-form > label {
   display: flex;
   flex-direction: column;
   color: white;
@@ -113,7 +138,7 @@ a {
   width: 75%;
 }
 
-.creade-credential-form > label > input {
+.transfer-credential-form > label > select {
   padding: 10px;
   font-size: 1.1rem;
   margin-top: 10px;
@@ -123,12 +148,40 @@ a {
   color: white;
 }
 
-.creade-credential-form > label > input:not([type="radio"]):focus {
+.create-credential-form {
+  display: none;
+  flex-direction: column;
+  width: 50%;
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px dashed white;
+}
+
+.create-credential-form > label {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 15px;
+  width: 75%;
+}
+
+.create-credential-form > label > input {
+  padding: 10px;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  background-color: #333;
+  color: white;
+}
+
+.create-credential-form > label > input:not([type="radio"]):focus {
   outline: none;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.creade-credential-form > label > input::placeholder {
+.create-credential-form > label > input::placeholder {
   color: #aaa;
 }
 
@@ -143,11 +196,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .form-submit-btn {
   margin-top: 25px;
   width: 40%;
-}
-
-.show {
-  display: flex;
-  flex-direction: column;
 }
 
 .credential-types {
@@ -171,15 +219,45 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   padding-left: 10px;
 }
 
-.create-credential-btn {
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 50px;
-  border: 1px solid #333;
+.credential {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #aaa;
 }
 
-.create-credential-btn:hover {
-  background-color: #555;
-  cursor: pointer;
+.credential:last-child {
+  border-bottom: none;
+}
+
+.credential:hover {
+  background-color: #333;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.selected {
+  background-color: #333;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.credentials-container {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+#credential-details {
+  width: 25%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 10%;
+}
+
+.employee-container {
+  display: none;
+}
+
+.status {
+  margin-top: 10px;
 }

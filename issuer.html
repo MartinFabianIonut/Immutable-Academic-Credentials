@@ -24,28 +24,75 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="page center-content-flex">
+    <div class="page">
       <div class="navigation">
         <div class="title">
           <h1><a href="index.html" id="home">Academic Credentials</a></h1>
           <h2>Issuer</h2>
         </div>
-        <button class="create-credential-btn" onclick="handleShowForm()">
-          Create Credential
-        </button>
-        <div id="credentials"></div>
-        <div>
-          <ul id="owners"></ul>
+        <div class="navigation-buttons">
+          <button
+            id="nav-create-cred"
+            class="navigation-btn btn nav-btn-active"
+            onclick="handleShowForm()"
+          >
+            Create Credential
+          </button>
+          <button
+            id="nav-see-cred"
+            class="navigation-btn btn"
+            onclick="handleSeeCredentials()"
+          >
+            See Credentials
+          </button>
+          <button
+            id="nav-transfer-cred"
+            class="navigation-btn btn"
+            onclick="handleTransferCredentials()"
+          >
+            Transfer Credential
+          </button>
         </div>
       </div>
-      <div class="content center-content-flex">
+      <div id="content" class="content center-content-flex">
+        <div id="credentials-container" class="credentials-container">
+          <div id="credentials"></div>
+          <div id="credential-details"></div>
+        </div>
+        <div id="employee-container" class="employee-container">
+          <form
+            class="transfer-credential-form general-form center-content-flex"
+          >
+            <label>
+              Employee Address:
+              <select id="employees" required></select>
+            </label>
+            <label>
+              Credential ID:
+              <select id="credentials-transfer" required></select>
+            </label>
+            <button
+              type="button"
+              class="form-submit-btn btn center-content-flex"
+              onclick="transfer(document.getElementById('employees').value, document.getElementById('credentials-transfer').value)"
+            >
+              Transfer Credential
+            </button>
+            <div id="transfer-status" class="status"></div>
+          </form>
+        </div>
         <form
           id="credentialForm"
-          class="creade-credential-form general-form center-content-flex"
+          class="create-credential-form general-form center-content-flex show"
         >
           <label>
             Name:
-            <input type="text" id="name" placeholder="John Dawn" required />
+            <input
+              type="text"
+              id="name"
+              placeholder="Credential name"
+              required
+            />
           </label>
           <label>
             Date of Issue:
@@ -113,28 +160,74 @@
               </div>
             </div>
           </label>
-          <button
-            type="submit"
-            class="form-submit-btn create-credential-btn center-content-flex"
-          >
+          <button type="submit" class="form-submit-btn btn center-content-flex">
             Create Credential
           </button>
+          <div id="txStatus" class="status"></div>
         </form>
-        <div id="txStatus"></div>
       </div>
-
-      <!-- <button
-        onclick="getCredentialsByIssuer(userAccount).then(displayCredentials)"
-      >
-        Get Credentials
-      </button> -->
     </div>
 
     <script>
       userType = "issuer";
 
       function handleShowForm() {
+        document
+          .getElementById("nav-create-cred")
+          .classList.toggle("nav-btn-active");
+        document
+          .getElementById("nav-transfer-cred")
+          .classList.remove("nav-btn-active");
+        document
+          .getElementById("nav-see-cred")
+          .classList.remove("nav-btn-active");
+        document
+          .getElementById("credentials-container")
+          .classList.remove("show");
+        document.getElementById("employee-container").classList.remove("show");
         document.getElementById("credentialForm").classList.toggle("show");
+      }
+
+      function handleSeeCredentials() {
+        document
+          .getElementById("nav-see-cred")
+          .classList.toggle("nav-btn-active");
+        document
+          .getElementById("nav-transfer-cred")
+          .classList.remove("nav-btn-active");
+        document
+          .getElementById("nav-create-cred")
+          .classList.remove("nav-btn-active");
+        document.getElementById("credentialForm").classList.remove("show");
+        document.getElementById("employee-container").classList.remove("show");
+        getCredentialsByIssuer(userAccount)
+          .then((ids) => handleViewCredential(ids[0]))
+          .then(
+            document
+              .getElementById("credentials-container")
+              .classList.toggle("show")
+          );
+      }
+
+      function handleTransferCredentials() {
+        document
+          .getElementById("nav-transfer-cred")
+          .classList.toggle("nav-btn-active");
+        document
+          .getElementById("nav-see-cred")
+          .classList.remove("nav-btn-active");
+        document
+          .getElementById("nav-create-cred")
+          .classList.remove("nav-btn-active");
+        document.getElementById("credentialForm").classList.remove("show");
+        document
+          .getElementById("credentials-container")
+          .classList.remove("show");
+        document.getElementById("employee-container").classList.toggle("show");
+      }
+
+      function resetForm() {
+        document.getElementById("credentialForm").reset();
       }
 
       function handleSubmit() {
@@ -155,6 +248,8 @@
           credentialUrl,
           credentialType
         );
+
+        resetForm();
       }
       var ownersAccounts;
 
@@ -169,21 +264,20 @@
         .toISOString()
         .split("T")[0];
 
-      function transfer(account) {
-        $("#txStatus").text(
+      function transfer(account, credentialId) {
+        $("#transfer-status").text(
           "Vezi ca dureaza seful meu transferul asta greu ca pumnul meu!"
         );
         credentials.methods
-          .transferFrom(userAccount, account, 0)
+          .transferFrom(userAccount, account, credentialId)
           .send({ from: userAccount })
           .on("receipt", function (receipt) {
-            $("#txStatus").text(
+            $("#transfer-status").text(
               "Successfully transferred credential to " + account + "!"
             );
-            // getCredentialsByIssuer(userAccount).then(displayCredentials);
           })
           .on("error", function (error) {
-            $("#txStatus").text(error);
+            $("#transfer-status").text(error);
           });
       }
 
