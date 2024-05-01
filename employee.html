@@ -43,6 +43,12 @@
             onchange="handleViewCredential(document.getElementById('credentials').value)"
           ></select>
           <div id="credential-details"></div>
+          <button
+            class="rank-btn btn"
+            onclick="handleUpgradeRank(document.getElementById('credentials').value)"
+          >
+            Upgrade Rank
+          </button>
         </div>
       </div>
     </div>
@@ -52,6 +58,15 @@
 
       function getCredentialsByOwner(owner) {
         return credentials.methods.getCredentialsByOwner(owner).call();
+      }
+
+      function handleUpgradeRank(credentialId) {
+        credentials.methods
+          .changeRank(credentialId)
+          .send({ from: userAccount, value: 0.002 * 10 ** 18 })
+          .then(() => {
+            getCredentialsByOwner(userAccount).then(displayCredentials);
+          });
       }
 
       loadApp();

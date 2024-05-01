@@ -2,6 +2,7 @@ var credentials;
 var userAccount;
 var userType;
 var ownersAccounts;
+const UNDEFINED_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 async function startApp() {
   var credentialAddress = CREDENTIAL_ADDRESS;
@@ -28,6 +29,7 @@ async function startApp() {
     userAccount = result[0];
     if (userType == "issuer") {
       ownersAccounts = result.slice(1);
+      $("#employees").empty();
       for (const account of ownersAccounts) {
         $("#employees").append(
           `<option value="${account}">${account}</option>`
@@ -36,6 +38,8 @@ async function startApp() {
       getCredentialsByIssuer(userAccount).then(displayCredentials);
     } else if (userType == "employer") {
       ownersAccounts = result.slice(1);
+      $("#employees").empty();
+      // TODO: SORT BY RANK
       for (const account of ownersAccounts) {
         $("#employees").append(
           `<option value="${account}">${account}</option>`
@@ -58,6 +62,16 @@ async function startApp() {
         );
       }
       getCredentialsByIssuer(userAccount).then(displayCredentials);
+    } else if (userType == "employer") {
+      ownersAccounts = accounts.slice(1);
+      $("#employees").empty();
+      // TODO: SORT BY RANK
+      for (const account of ownersAccounts) {
+        $("#employees").append(
+          `<option value="${account}">${account}</option>`
+        );
+      }
+      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials);
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
@@ -88,26 +102,51 @@ async function startApp() {
     .on("error", console.error);
 }
 
+async function getSortedCredentials(ids) {
+  var sortedCredentials = [];
+  for (const id of ids) {
+    await getCredentialDetails(id).then(function (credential) {
+      sortedCredentials.push({ details: credential, id: id });
+    });
+  }
+  return sortedCredentials.sort((a, b) => b.details.rank - a.details.rank);
+}
+
 function displayCredentials(ids) {
   $("#credentials").empty();
   $("#credentials-transfer").empty();
-  for (const id of ids) {
-    getCredentialDetails(id).then(function (credential) {
+  getSortedCredentials(ids).then(function (sortedCredentials) {
+    console.log(sortedCredentials);
+    for (const credential of sortedCredentials) {
       $("#credentials").append(
-        `<option id="${id}" value="${id}" class="credential cursor-pointer">${
-          credential.name
-        } ${intToDate(credential.dateIssued)}</option>`
+        `<option id="${credential.id}" value="${
+          credential.id
+        }" class="credential cursor-pointer">${
+          credential.details.name
+        } ${intToDate(credential.details.dateIssued)}</option>`
       );
       if (userType == "issuer") {
-        $("#credentials-transfer").append(
-          `<option value="${id}">${credential.name} ${intToDate(
-            credential.dateIssued
-          )}</option>`
-        );
+        credentials.methods
+          .credentialToOwner(credential.id)
+          .call()
+          .then(function (owner) {
+            if (owner == UNDEFINED_ADDRESS) {
+              $("#credentials-transfer").append(
+                `<option value="${credential.id}">${
+                  credential.details.name
+                } ${intToDate(credential.details.dateIssued)}</option>`
+              );
+            }
+          });
       }
-    });
+    }
+  });
+
+  if (ids.length > 0) {
+    handleViewCredential(ids[0]);
+  } else {
+    $("#credential-details").empty();
   }
-  handleViewCredential(ids[0]);
 }
 
 function handleViewCredential(id) {

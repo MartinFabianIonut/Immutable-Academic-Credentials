@@ -218,18 +218,4 @@ contract CredentialHelper is CredentialFactory {
         }
         return result;
     }
-
-    /**
-     * @dev This function returns all the credentials ranking types.
-     * @return An array of credential ranking types.
-     */
-    function getRankingTypes() external pure returns (CredentialRank[] memory) {
-        CredentialRank[] memory result = new CredentialRank[](5);
-        result[0] = CredentialRank.Bronze;
-        result[1] = CredentialRank.Silver;
-        result[2] = CredentialRank.Gold;
-        result[3] = CredentialRank.Platinum;
-        result[4] = CredentialRank.Diamond;
-        return result;
-    }
 }
