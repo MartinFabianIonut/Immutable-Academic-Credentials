@@ -55,21 +55,36 @@
         </div>
       </div>
       <div id="content" class="content center-content-flex">
-        <div id="credentials-container" class="credentials-container">
-          <div id="credentials"></div>
+        <div
+          id="credentials-container"
+          class="general-form center-content-flex see-credentials credentials-container"
+        >
+          <h2>Credential Name & Date</h2>
+          <select
+            id="credentials"
+            class="select-form"
+            onchange="handleViewCredential(document.getElementById('credentials').value)"
+          ></select>
           <div id="credential-details"></div>
         </div>
-        <div id="employee-container" class="employee-container">
+        <div
+          id="employee-container"
+          class="employee-container center-content-flex"
+        >
           <form
             class="transfer-credential-form general-form center-content-flex"
           >
             <label>
               Employee Address:
-              <select id="employees" required></select>
+              <select id="employees" class="select-form" required></select>
             </label>
             <label>
               Credential ID:
-              <select id="credentials-transfer" required></select>
+              <select
+                id="credentials-transfer"
+                class="select-form"
+                required
+              ></select>
             </label>
             <button
               type="button"
@@ -251,7 +266,6 @@
 
         resetForm();
       }
-      var ownersAccounts;
 
       document
         .getElementById("credentialForm")

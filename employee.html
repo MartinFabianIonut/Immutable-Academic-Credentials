@@ -31,9 +31,17 @@
           <h2>Employee</h2>
         </div>
       </div>
-      <div class="content">
-        <div id="credentials-container" class="credentials-container show">
-          <div id="credentials"></div>
+      <div class="content center-content-flex">
+        <div
+          id="credentials-container"
+          class="general-form center-content-flex see-credentials credentials-container show"
+        >
+          <h2>Credential Name & Date</h2>
+          <select
+            id="credentials"
+            class="select-form"
+            onchange="handleViewCredential(document.getElementById('credentials').value)"
+          ></select>
           <div id="credential-details"></div>
         </div>
       </div>

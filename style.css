@@ -126,6 +126,7 @@ a {
   flex-direction: column;
   padding: 25px;
   border-radius: 15px;
+  min-width: 50%;
   border: 1px dashed white;
 }
 
@@ -138,7 +139,7 @@ a {
   width: 75%;
 }
 
-.transfer-credential-form > label > select {
+.select-form {
   padding: 10px;
   font-size: 1.1rem;
   margin-top: 10px;
@@ -146,6 +147,7 @@ a {
   border: 1px solid #aaa;
   background-color: #333;
   color: white;
+  min-width: 60%;
 }
 
 .create-credential-form {
@@ -239,23 +241,40 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
+#credentials {
+  margin-bottom: 20px;
+}
+
 .credentials-container {
   display: none;
-  width: 100%;
+  padding-top: 10px;
   justify-content: center;
   overflow-y: auto;
 }
 
+.see-credentials {
+  flex-direction: column;
+  min-width: 30%;
+  padding: 30px 0;
+  border: 1px dashed white;
+  border-radius: 15px;
+}
+
 #credential-details {
-  width: 25%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   margin-left: 10%;
 }
 
+#credential-details > div {
+  margin-top: 10px;
+  font-size: 1.12rem;
+}
+
 .employee-container {
   display: none;
+  width: 50%;
 }
 
 .status {

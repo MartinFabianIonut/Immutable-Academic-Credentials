@@ -1,6 +1,7 @@
 var credentials;
 var userAccount;
 var userType;
+var ownersAccounts;
 
 async function startApp() {
   var credentialAddress = CREDENTIAL_ADDRESS;
@@ -33,6 +34,14 @@ async function startApp() {
         );
       }
       getCredentialsByIssuer(userAccount).then(displayCredentials);
+    } else if (userType == "employer") {
+      ownersAccounts = result.slice(1);
+      for (const account of ownersAccounts) {
+        $("#employees").append(
+          `<option value="${account}">${account}</option>`
+        );
+      }
+      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials);
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
@@ -41,6 +50,13 @@ async function startApp() {
   window.ethereum.on("accountsChanged", function (accounts) {
     userAccount = accounts[0];
     if (userType == "issuer") {
+      ownersAccounts = accounts.slice(1);
+      $("#employees").empty();
+      for (const account of ownersAccounts) {
+        $("#employees").append(
+          `<option value="${account}">${account}</option>`
+        );
+      }
       getCredentialsByIssuer(userAccount).then(displayCredentials);
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
@@ -74,12 +90,13 @@ async function startApp() {
 
 function displayCredentials(ids) {
   $("#credentials").empty();
+  $("#credentials-transfer").empty();
   for (const id of ids) {
     getCredentialDetails(id).then(function (credential) {
       $("#credentials").append(
-        `<div id="${id}" class="credential cursor-pointer" onClick="handleViewCredential(${id})">${
+        `<option id="${id}" value="${id}" class="credential cursor-pointer">${
           credential.name
-        } ${intToDate(credential.dateIssued)}</div>`
+        } ${intToDate(credential.dateIssued)}</option>`
       );
       if (userType == "issuer") {
         $("#credentials-transfer").append(
@@ -90,15 +107,12 @@ function displayCredentials(ids) {
       }
     });
   }
+  handleViewCredential(ids[0]);
 }
 
 function handleViewCredential(id) {
-  document.querySelectorAll(".selected").forEach((element) => {
-    element.classList.remove("selected");
-  });
-  document.getElementById(id).classList.add("selected");
+  $("#credential-details").empty();
   getCredentialDetails(id).then(function (credential) {
-    $("#credential-details").empty();
     $("#credential-details").append(
       `<div>Name: ${credential.name}</div>
                     <div>Date of Issue: ${intToDate(
@@ -114,6 +128,7 @@ function handleViewCredential(id) {
                     <div>Credential Type: ${typeToString(
                       credential.credentialType
                     )}</div>
+                    <div>Credential Rank: ${rankToString(credential.rank)}</div>
                 `
     );
   });
@@ -137,6 +152,23 @@ function typeToString(type) {
       return "Achievement";
     default:
       return "Unknown";
+  }
+}
+
+function rankToString(rank) {
+  switch (rank) {
+    case "0":
+      return "Bronze";
+    case "1":
+      return "Silver";
+    case "2":
+      return "Gold";
+    case "3":
+      return "Platinum";
+    case "4":
+      return "Diamond";
+    default:
+      return "None";
   }
 }
 
