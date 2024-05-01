@@ -4,7 +4,15 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./CredentialFactory.sol";
 
 contract CredentialHelper is CredentialFactory {
-    uint rankingFee = 0.002 ether;
+    mapping(uint8 => uint) public rankingFees;
+
+    constructor() public {
+        // Set default fees for each rank transition
+        rankingFees[uint8(CredentialRank.Bronze)] = 0.002 ether; // Bronze to Silver
+        rankingFees[uint8(CredentialRank.Silver)] = 0.0035 ether; // Silver to Gold
+        rankingFees[uint8(CredentialRank.Gold)] = 0.0051 ether; // Gold to Platinum
+        rankingFees[uint8(CredentialRank.Platinum)] = 0.0077 ether; // Platinum to Diamond
+    }
 
     /**
      * @dev This modifier checks if the sender is the issuer of the credential.
@@ -53,10 +61,6 @@ contract CredentialHelper is CredentialFactory {
             "Invalid credential rank"
         );
         _;
-    }
-
-    function setRankingFee(uint _fee) external onlyOwner {
-        rankingFee = _fee;
     }
 
     function changeName(
@@ -147,38 +151,32 @@ contract CredentialHelper is CredentialFactory {
         onlyIssuerOrOwnerOf(_credentialId)
         canChangeRank(_credentialId)
     {
-        if (msg.sender == credentialToOwner[_credentialId]) {
-            require(msg.value == rankingFee, "Fee required for owner");
+        address owner = credentialToOwner[_credentialId];
+
+        Credential storage credential = credentials[_credentialId];
+        uint8 currentRank = uint8(credential.rank);
+
+        uint fee = rankingFees[currentRank];
+        if (msg.sender == owner) {
+            require(msg.value == fee, "Fee required for owner");
         }
 
-        CredentialRank oldRank = credentials[_credentialId].rank;
-        credentials[_credentialId].rank = CredentialRank(
-            uint8(credentials[_credentialId].rank) + 1
-        );
+        uint8 oldRank = uint8(credentials[_credentialId].rank);
+        credentials[_credentialId].rank = CredentialRank(oldRank + 1);
+
+        uint16 credentialRank = uint16(credentials[_credentialId].rank);
+        ownerCredentialRankCount[owner][
+            credentialRank
+        ] = ownerCredentialRankCount[owner][credentialRank].add(1);
+        ownerCredentialRankCount[owner][oldRank] = ownerCredentialRankCount[
+            owner
+        ][oldRank].sub(1);
+
         emit RankChanged(
             _credentialId,
-            oldRank,
+            CredentialRank(oldRank),
             credentials[_credentialId].rank
         );
-    }
-
-    /**
-     * @dev This function allows the issuer of the credential to directly set the rank to the desired type without requiring a fee.
-     * @param _credentialId The ID of the credential to change the rank of.
-     * @param _newRank The desired rank to set for the credential.
-     */
-    function setRankByIssuer(
-        uint _credentialId,
-        CredentialRank _newRank
-    ) external onlyIssuerOf(_credentialId) onlyValidCredentialRank(_newRank) {
-        require(
-            _newRank != CredentialRank.Diamond,
-            "Diamond rank cannot be directly set"
-        );
-
-        CredentialRank oldRank = credentials[_credentialId].rank;
-        credentials[_credentialId].rank = _newRank;
-        emit RankChanged(_credentialId, oldRank, _newRank);
     }
 
     /**

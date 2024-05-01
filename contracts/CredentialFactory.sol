@@ -66,6 +66,10 @@ contract CredentialFactory is Ownable {
     mapping(address => mapping(uint16 => uint16))
         public ownerCredentialTypeCount;
 
+    // Mapping for count of credential ranks owned by each address
+    mapping(address => mapping(uint16 => uint16))
+        public ownerCredentialRankCount;
+
     function _createCredential(
         string memory _name,
         CredentialType _type,
@@ -90,9 +94,8 @@ contract CredentialFactory is Ownable {
         credentials.push(credential);
         uint id = credentials.length - 1;
         credentialToIssuer[id] = msg.sender;
-        issuerCredentialCount[msg.sender] = issuerCredentialCount[msg.sender].add(
-            1
-        );
+        issuerCredentialCount[msg.sender] = issuerCredentialCount[msg.sender]
+            .add(1);
         emit NewCredential(id, _name, _type, msg.sender);
     }
 

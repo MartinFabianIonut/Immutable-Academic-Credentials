@@ -48,10 +48,14 @@ contract CredentialOwnership is CredentialHelper, ERC721 {
      */
     function _transfer(address _from, address _to, uint256 _tokenId) private {
         ownerCredentialCount[_to] = ownerCredentialCount[_to].add(1);
-        CredentialType cT = credentials[_tokenId].credentialType;
-        ownerCredentialTypeCount[_to][uint16(cT)] = ownerCredentialTypeCount[
-            _to
-        ][uint16(cT)].add(1);
+        uint16 credentialType = uint16(credentials[_tokenId].credentialType);
+        ownerCredentialTypeCount[_to][
+            credentialType
+        ] = ownerCredentialTypeCount[_to][credentialType].add(1);
+        uint16 credentialRank = uint16(credentials[_tokenId].rank);
+        ownerCredentialRankCount[_to][
+            credentialRank
+        ] = ownerCredentialRankCount[_to][credentialRank].add(1);
         credentialToOwner[_tokenId] = _to;
         emit Transfer(_from, _to, _tokenId);
     }

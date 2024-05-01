@@ -71,7 +71,7 @@ async function startApp() {
           `<option value="${account}">${account}</option>`
         );
       }
-      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials);
+      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials)
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
@@ -102,6 +102,16 @@ async function startApp() {
     .on("error", console.error);
 }
 
+async function updateUpgradeButton(credentialId) {
+  const currentRank = await getCurrentRank(credentialId);
+  const nextRankFee = await getNextRankFee(currentRank);
+
+  const nextRankFeeInEther = nextRankFee / 10 ** 18;
+  const button = document.getElementById("rank-upgrade-btn");
+  button.innerHTML = `Upgrade Rank<br>(Fee: ${nextRankFeeInEther} ETH)`;
+  button.onclick = () => handleUpgradeRank(credentialId, nextRankFee);
+}
+
 async function getSortedCredentials(ids) {
   var sortedCredentials = [];
   for (const id of ids) {
@@ -113,17 +123,15 @@ async function getSortedCredentials(ids) {
 }
 
 function displayCredentials(ids) {
-  $("#credentials").empty();
-  $("#credentials-transfer").empty();
   getSortedCredentials(ids).then(function (sortedCredentials) {
-    console.log(sortedCredentials);
+    $("#credentials").empty();
+    $("#credentials-transfer").empty();
+    console.log("Sorted credentials:", sortedCredentials);
     for (const credential of sortedCredentials) {
       $("#credentials").append(
-        `<option id="${credential.id}" value="${
-          credential.id
-        }" class="credential cursor-pointer">${
-          credential.details.name
-        } ${intToDate(credential.details.dateIssued)}</option>`
+        `<option id="${credential.id}" value="${credential.id
+        }" class="credential cursor-pointer">${credential.details.name
+        } - ${rankToString(credential.details.rank)} ${typeToString(credential.details.credentialType).toLowerCase()}</option>`
       );
       if (userType == "issuer") {
         credentials.methods
@@ -132,43 +140,72 @@ function displayCredentials(ids) {
           .then(function (owner) {
             if (owner == UNDEFINED_ADDRESS) {
               $("#credentials-transfer").append(
-                `<option value="${credential.id}">${
-                  credential.details.name
+                `<option value="${credential.id}">${credential.details.name
                 } ${intToDate(credential.details.dateIssued)}</option>`
               );
             }
           });
       }
     }
+    updateUpgradeButton(sortedCredentials[0].id);
+    if (ids.length > 0) {
+      handleViewCredential(sortedCredentials[0].id);
+    } else {
+      $("#credential-container").empty();
+    }
   });
 
-  if (ids.length > 0) {
-    handleViewCredential(ids[0]);
-  } else {
-    $("#credential-details").empty();
-  }
+
 }
 
 function handleViewCredential(id) {
-  $("#credential-details").empty();
+  $("#credential-container").empty();
   getCredentialDetails(id).then(function (credential) {
-    $("#credential-details").append(
-      `<div>Name: ${credential.name}</div>
-                    <div>Date of Issue: ${intToDate(
-                      credential.dateIssued
-                    )}</div>
-                    <div>Expiration Date: ${intToDate(
-                      credential.expirationDate
-                    )}</div>
-                    <div>Description: ${credential.description}</div>
-                    <div>Credential URL: <a style="color:white; text-decoration: underline" href="${
-                      credential.credentialUrl
-                    }">${credential.credentialUrl}</a></div>
-                    <div>Credential Type: ${typeToString(
-                      credential.credentialType
-                    )}</div>
-                    <div>Credential Rank: ${rankToString(credential.rank)}</div>
-                `
+    $("#credential-container").append(
+      `<div class="diploma ${typeToString(credential.credentialType).toLowerCase()}">
+        <div class="header">
+          <h1>${credential.name}</h1>
+          <br /><br />
+          <div class="rank ${rankToString(credential.rank).toLowerCase()}">${rankToString(credential.rank)} Level</div>
+        </div>
+
+        <div class="info ${typeToString(
+        credential.credentialType
+      ).toLowerCase()}">
+              <p>
+									Description:
+									<span
+										>${credential.description}</span
+									>
+								</p>
+								<p>
+									Credential URL:
+									<a href="${credential.credentialUrl
+      }" class="credential-url"
+                              >${credential.credentialUrl
+      }</a>
+								</p>
+								<div class="dates">
+									<p>Issue: <span>${intToDate(
+        credential.dateIssued
+      )}</span></p>                                                          
+									<p>Expiration: <span>${intToDate(
+        credential.expirationDate
+      )}</span></p>
+								</div>
+                </div>
+                <div class="footer">
+                  <p class="type">
+                    Credential Type: <span>${typeToString(
+        credential.credentialType
+      )}</span>
+                  </p>
+                </div>
+              
+              </div>
+
+              </div>
+              `
     );
   });
 }

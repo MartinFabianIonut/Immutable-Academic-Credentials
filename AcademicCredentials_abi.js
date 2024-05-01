@@ -1,575 +1,576 @@
 var AcademicCredentialABI = [
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "_name",
-        type: "string",
+        "name": "_name",
+        "type": "string"
       },
       {
-        name: "_type",
-        type: "uint8",
+        "name": "_type",
+        "type": "uint8"
       },
       {
-        name: "_dateOfIssue",
-        type: "uint256",
+        "name": "_dateOfIssue",
+        "type": "uint256"
       },
       {
-        name: "_expirationDate",
-        type: "uint256",
+        "name": "_expirationDate",
+        "type": "uint256"
       },
       {
-        name: "_description",
-        type: "string",
+        "name": "_description",
+        "type": "string"
       },
       {
-        name: "_credentialUrl",
-        type: "string",
-      },
+        "name": "_credentialUrl",
+        "type": "string"
+      }
     ],
-    name: "createCredential",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "createCredential",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [],
-    name: "getRankingTypes",
-    outputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "",
-        type: "uint8[]",
+        "name": "_approved",
+        "type": "address"
       },
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
     ],
-    payable: false,
-    stateMutability: "pure",
-    type: "function",
+    "name": "approve",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "_approved",
-        type: "address",
+        "name": "_from",
+        "type": "address"
       },
       {
-        name: "_tokenId",
-        type: "uint256",
+        "name": "_to",
+        "type": "address"
       },
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
     ],
-    name: "approve",
-    outputs: [],
-    payable: true,
-    stateMutability: "payable",
-    type: "function",
+    "name": "transferFrom",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_from",
-        type: "address",
-      },
-      {
-        name: "_to",
-        type: "address",
-      },
-      {
-        name: "_tokenId",
-        type: "uint256",
-      },
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    name: "transferFrom",
-    outputs: [],
-    payable: true,
-    stateMutability: "payable",
-    type: "function",
+    "name": "credentialToOwner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "",
-        type: "uint256",
+        "name": "_owner",
+        "type": "address"
       },
-    ],
-    name: "credentialToOwner",
-    outputs: [
       {
-        name: "",
-        type: "address",
-      },
+        "name": "_type",
+        "type": "uint16"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "name": "balanceOfCredentialType",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_owner",
-        type: "address",
-      },
-      {
-        name: "_type",
-        type: "uint16",
-      },
+        "name": "_issuer",
+        "type": "address"
+      }
     ],
-    name: "balanceOfCredentialType",
-    outputs: [
+    "name": "getCredentialsByIssuer",
+    "outputs": [
       {
-        name: "",
-        type: "uint16",
-      },
+        "name": "",
+        "type": "uint256[]"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_issuer",
-        type: "address",
-      },
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    name: "getCredentialsByIssuer",
-    outputs: [
+    "name": "credentialToIssuer",
+    "outputs": [
       {
-        name: "",
-        type: "uint256[]",
-      },
+        "name": "",
+        "type": "address"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "",
-        type: "uint256",
-      },
+        "name": "_credentialId",
+        "type": "uint256"
+      }
     ],
-    name: "credentialToIssuer",
-    outputs: [
-      {
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "name": "changeRank",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_credentialId",
-        type: "uint256",
-      },
+        "name": "_tokenId",
+        "type": "uint256"
+      }
     ],
-    name: "changeRank",
-    outputs: [],
-    payable: true,
-    stateMutability: "payable",
-    type: "function",
+    "name": "ownerOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_credentialId",
-        type: "uint256",
+        "name": "",
+        "type": "address"
       },
       {
-        name: "_newRank",
-        type: "uint8",
-      },
+        "name": "",
+        "type": "uint16"
+      }
     ],
-    name: "setRankByIssuer",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "ownerCredentialRankCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "_tokenId",
-        type: "uint256",
+        "name": "_credentialId",
+        "type": "uint256"
       },
-    ],
-    name: "ownerOf",
-    outputs: [
       {
-        name: "",
-        type: "address",
+        "name": "_newName",
+        "type": "string"
       },
+      {
+        "name": "_newType",
+        "type": "uint8"
+      },
+      {
+        "name": "_newDateIssued",
+        "type": "uint256"
+      },
+      {
+        "name": "_newExpirationDate",
+        "type": "uint256"
+      },
+      {
+        "name": "_newDescription",
+        "type": "string"
+      },
+      {
+        "name": "_newCredentialUrl",
+        "type": "string"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "name": "changeCredential",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_credentialId",
-        type: "uint256",
-      },
-      {
-        name: "_newName",
-        type: "string",
-      },
-      {
-        name: "_newType",
-        type: "uint8",
-      },
-      {
-        name: "_newDateIssued",
-        type: "uint256",
-      },
-      {
-        name: "_newExpirationDate",
-        type: "uint256",
-      },
-      {
-        name: "_newDescription",
-        type: "string",
-      },
-      {
-        name: "_newCredentialUrl",
-        type: "string",
-      },
+        "name": "_owner",
+        "type": "address"
+      }
     ],
-    name: "changeCredential",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
-      {
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "constant": false,
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [],
-    name: "owner",
-    outputs: [
+    "constant": true,
+    "inputs": [],
+    "name": "isOwner",
+    "outputs": [
       {
-        name: "",
-        type: "address",
-      },
+        "name": "",
+        "type": "bool"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [],
-    name: "isOwner",
-    outputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "",
-        type: "bool",
+        "name": "",
+        "type": "address"
       },
+      {
+        "name": "",
+        "type": "uint16"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "name": "ownerCredentialTypeCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "",
-        type: "address",
-      },
-      {
-        name: "",
-        type: "uint16",
-      },
+        "name": "",
+        "type": "uint8"
+      }
     ],
-    name: "ownerCredentialTypeCount",
-    outputs: [
+    "name": "rankingFees",
+    "outputs": [
       {
-        name: "",
-        type: "uint16",
-      },
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "_owner",
-        type: "address",
-      },
+        "name": "_owner",
+        "type": "address"
+      }
     ],
-    name: "getCredentialsByOwner",
-    outputs: [
+    "name": "getCredentialsByOwner",
+    "outputs": [
       {
-        name: "",
-        type: "uint256[]",
-      },
+        "name": "",
+        "type": "uint256[]"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: true,
-    inputs: [
+    "constant": true,
+    "inputs": [
       {
-        name: "",
-        type: "uint256",
-      },
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    name: "credentials",
-    outputs: [
+    "name": "credentials",
+    "outputs": [
       {
-        name: "name",
-        type: "string",
+        "name": "name",
+        "type": "string"
       },
       {
-        name: "credentialType",
-        type: "uint8",
+        "name": "credentialType",
+        "type": "uint8"
       },
       {
-        name: "dateIssued",
-        type: "uint256",
+        "name": "dateIssued",
+        "type": "uint256"
       },
       {
-        name: "expirationDate",
-        type: "uint256",
+        "name": "expirationDate",
+        "type": "uint256"
       },
       {
-        name: "description",
-        type: "string",
+        "name": "description",
+        "type": "string"
       },
       {
-        name: "credentialUrl",
-        type: "string",
+        "name": "credentialUrl",
+        "type": "string"
       },
       {
-        name: "rank",
-        type: "uint8",
-      },
+        "name": "rank",
+        "type": "uint8"
+      }
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        name: "_fee",
-        type: "uint256",
-      },
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
-    name: "setRankingFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    constant: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        name: "newOwner",
-        type: "address",
+        "indexed": true,
+        "name": "_from",
+        "type": "address"
       },
+      {
+        "indexed": true,
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_tokenId",
+        "type": "uint256"
+      }
     ],
-    name: "transferOwnership",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "Transfer",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        name: "_from",
-        type: "address",
+        "indexed": true,
+        "name": "_owner",
+        "type": "address"
       },
       {
-        indexed: true,
-        name: "_to",
-        type: "address",
+        "indexed": true,
+        "name": "_approved",
+        "type": "address"
       },
       {
-        indexed: true,
-        name: "_tokenId",
-        type: "uint256",
-      },
+        "indexed": true,
+        "name": "_tokenId",
+        "type": "uint256"
+      }
     ],
-    name: "Transfer",
-    type: "event",
+    "name": "Approval",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        name: "_owner",
-        type: "address",
+        "indexed": false,
+        "name": "credentialId",
+        "type": "uint256"
       },
       {
-        indexed: true,
-        name: "_approved",
-        type: "address",
+        "indexed": false,
+        "name": "name",
+        "type": "string"
       },
       {
-        indexed: true,
-        name: "_tokenId",
-        type: "uint256",
+        "indexed": false,
+        "name": "credentialType",
+        "type": "uint8"
       },
+      {
+        "indexed": false,
+        "name": "issuer",
+        "type": "address"
+      }
     ],
-    name: "Approval",
-    type: "event",
+    "name": "NewCredential",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        name: "credentialId",
-        type: "uint256",
+        "indexed": false,
+        "name": "credentialId",
+        "type": "uint256"
       },
       {
-        indexed: false,
-        name: "name",
-        type: "string",
+        "indexed": false,
+        "name": "oldRank",
+        "type": "uint8"
       },
       {
-        indexed: false,
-        name: "credentialType",
-        type: "uint8",
-      },
+        "indexed": false,
+        "name": "newRank",
+        "type": "uint8"
+      }
     ],
-    name: "NewCredential",
-    type: "event",
+    "name": "RankChanged",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        name: "credentialId",
-        type: "uint256",
+        "indexed": false,
+        "name": "credentialId",
+        "type": "uint256"
       },
       {
-        indexed: false,
-        name: "oldRank",
-        type: "uint8",
+        "indexed": false,
+        "name": "name",
+        "type": "string"
       },
       {
-        indexed: false,
-        name: "newRank",
-        type: "uint8",
+        "indexed": false,
+        "name": "credentialType",
+        "type": "uint8"
       },
+      {
+        "indexed": false,
+        "name": "dateIssued",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "expirationDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "credentialUrl",
+        "type": "string"
+      }
     ],
-    name: "RankChanged",
-    type: "event",
+    "name": "CredentialChanged",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        name: "credentialId",
-        type: "uint256",
+        "indexed": true,
+        "name": "previousOwner",
+        "type": "address"
       },
       {
-        indexed: false,
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        name: "credentialType",
-        type: "uint8",
-      },
-      {
-        indexed: false,
-        name: "dateIssued",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        name: "expirationDate",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        name: "description",
-        type: "string",
-      },
-      {
-        indexed: false,
-        name: "credentialUrl",
-        type: "string",
-      },
+        "indexed": true,
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
-    name: "CredentialChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
+    "name": "OwnershipTransferred",
+    "type": "event"
+  }
 ];

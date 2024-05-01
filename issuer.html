@@ -1,348 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Issuer front-end</title>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-    ></script>
-    <script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="web3.min.js"
-    ></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="AcademicCredentials_abi.js"
-    ></script>
-    <script src="AcademicCredentialsAddress.js"></script>
-    <script src="utils.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <div class="navigation">
-        <div class="title">
-          <h1><a href="index.html" id="home">Academic Credentials</a></h1>
-          <h2>Issuer</h2>
-        </div>
-        <div class="navigation-buttons">
-          <button
-            id="nav-create-cred"
-            class="navigation-btn btn nav-btn-active"
-            onclick="handleShowForm()"
-          >
-            Create Credential
-          </button>
-          <button
-            id="nav-see-cred"
-            class="navigation-btn btn"
-            onclick="handleSeeCredentials()"
-          >
-            See Credentials
-          </button>
-          <button
-            id="nav-transfer-cred"
-            class="navigation-btn btn"
-            onclick="handleTransferCredentials()"
-          >
-            Transfer Credential
-          </button>
-        </div>
-      </div>
-      <div id="content" class="content center-content-flex">
-        <div
-          id="credentials-container"
-          class="general-form center-content-flex see-credentials credentials-container"
-        >
-          <h2>Credential Name & Date</h2>
-          <select
-            id="credentials"
-            class="select-form"
-            onchange="handleViewCredential(document.getElementById('credentials').value)"
-          ></select>
-          <div id="credential-details"></div>
-        </div>
-        <div
-          id="employee-container"
-          class="employee-container center-content-flex"
-        >
-          <form
-            class="transfer-credential-form general-form center-content-flex"
-          >
-            <label>
-              Employee Address:
-              <select id="employees" class="select-form" required></select>
-            </label>
-            <label>
-              Credential ID:
-              <select
-                id="credentials-transfer"
-                class="select-form"
-                required
-              ></select>
-            </label>
-            <button
-              type="button"
-              class="form-submit-btn btn center-content-flex"
-              onclick="transfer(document.getElementById('employees').value, document.getElementById('credentials-transfer').value)"
-            >
-              Transfer Credential
-            </button>
-            <div id="transfer-status" class="status"></div>
-          </form>
-        </div>
-        <form
-          id="credentialForm"
-          class="create-credential-form general-form center-content-flex show"
-        >
-          <label>
-            Name:
-            <input
-              type="text"
-              id="name"
-              placeholder="Credential name"
-              required
-            />
-          </label>
-          <label>
-            Date of Issue:
-            <input type="date" id="dateOfIssue" required />
-          </label>
-          <label>
-            Expiration Date:
-            <input type="date" id="expirationDate" required />
-          </label>
-          <label>
-            Description:
-            <input
-              type="text"
-              id="description"
-              placeholder="Computer Science, Literature"
-              required
-            />
-          </label>
-          <label>
-            Credential URL:
-            <input
-              type="text"
-              id="credentialUrl"
-              placeholder="www.example.com"
-              required
-            />
-          </label>
-          <label>
-            Credential Type:
-            <div class="credential-types">
-              <div class="credential-type cursor-pointer">
-                <input
-                  type="radio"
-                  id="Certificate"
-                  value="0"
-                  name="credentialType"
-                  class="cursor-pointer"
-                  checked
-                />
-                <label for="Certificate" class="cursor-pointer"
-                  >Certificate</label
-                >
-              </div>
-              <div class="credential-type cursor-pointer">
-                <input
-                  type="radio"
-                  id="Degree"
-                  value="1"
-                  name="credentialType"
-                  class="cursor-pointer"
-                />
-                <label for="Degree" class="cursor-pointer">Degree</label>
-              </div>
-              <div class="credential-type cursor-pointer">
-                <input
-                  type="radio"
-                  id="Achievement"
-                  value="2"
-                  name="credentialType"
-                  class="cursor-pointer"
-                />
-                <label for="Achievement" class="cursor-pointer"
-                  >Achievement</label
-                >
-              </div>
-            </div>
-          </label>
-          <button type="submit" class="form-submit-btn btn center-content-flex">
-            Create Credential
-          </button>
-          <div id="txStatus" class="status"></div>
-        </form>
-      </div>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Issuer front-end</title>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+		></script>
+		<script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="web3.min.js"
+		></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="AcademicCredentials_abi.js"
+		></script>
+		<script src="AcademicCredentialsAddress.js"></script>
+		<script src="utils.js"></script>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="credential.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<div class="page">
+			<div class="navigation">
+				<div class="title">
+					<h1><a href="index.html" id="home">Academic Credentials</a></h1>
+					<h2>Issuer</h2>
+				</div>
+				<div class="navigation-buttons">
+					<button
+						id="nav-create-cred"
+						class="navigation-btn btn nav-btn-active"
+						onclick="handleShowForm()"
+					>
+						Create Credential
+					</button>
+					<button
+						id="nav-see-cred"
+						class="navigation-btn btn"
+						onclick="handleSeeCredentials()"
+					>
+						See Credentials
+					</button>
+					<button
+						id="nav-transfer-cred"
+						class="navigation-btn btn"
+						onclick="handleTransferCredentials()"
+					>
+						Transfer Credential
+					</button>
+				</div>
+			</div>
+			<div id="content" class="content center-content-flex">
+				<div
+					id="credentials-container"
+					class="general-form center-content-flex see-credentials credentials-container"
+				>
+					<h2>Credential Name & Date</h2>
+					<select
+						id="credentials"
+						class="select-form"
+						onchange="handleViewCredential(document.getElementById('credentials').value)"
+					></select>
+					<div id="credential-container" class="credential-container"></div>
+				</div>
+				<div
+					id="employee-container"
+					class="employee-container center-content-flex"
+				>
+					<form
+						class="transfer-credential-form general-form center-content-flex"
+					>
+						<label>
+							Employee Address:
+							<select id="employees" class="select-form" required></select>
+						</label>
+						<label>
+							Credential ID:
+							<select
+								id="credentials-transfer"
+								class="select-form"
+								required
+							></select>
+						</label>
+						<button
+							type="button"
+							class="form-submit-btn btn center-content-flex"
+							onclick="transfer(document.getElementById('employees').value, document.getElementById('credentials-transfer').value)"
+						>
+							Transfer Credential
+						</button>
+						<div id="transfer-status" class="status"></div>
+					</form>
+				</div>
+				<form
+					id="credentialForm"
+					class="create-credential-form general-form center-content-flex show"
+				>
+					<label>
+						Name:
+						<input
+							type="text"
+							id="name"
+							placeholder="Credential name"
+							required
+						/>
+					</label>
+					<label>
+						Date of Issue:
+						<input type="date" id="dateOfIssue" required />
+					</label>
+					<label>
+						Expiration Date:
+						<input type="date" id="expirationDate" required />
+					</label>
+					<label>
+						Description:
+						<input
+							type="text"
+							id="description"
+							placeholder="Computer Science, Literature"
+							required
+						/>
+					</label>
+					<label>
+						Credential URL:
+						<input
+							type="text"
+							id="credentialUrl"
+							placeholder="www.example.com"
+							required
+						/>
+					</label>
+					<label>
+						Credential Type:
+						<div class="credential-types">
+							<div class="credential-type cursor-pointer">
+								<input
+									type="radio"
+									id="Certificate"
+									value="0"
+									name="credentialType"
+									class="cursor-pointer"
+									checked
+								/>
+								<label for="Certificate" class="cursor-pointer"
+									>Certificate</label
+								>
+							</div>
+							<div class="credential-type cursor-pointer">
+								<input
+									type="radio"
+									id="Degree"
+									value="1"
+									name="credentialType"
+									class="cursor-pointer"
+								/>
+								<label for="Degree" class="cursor-pointer">Degree</label>
+							</div>
+							<div class="credential-type cursor-pointer">
+								<input
+									type="radio"
+									id="Achievement"
+									value="2"
+									name="credentialType"
+									class="cursor-pointer"
+								/>
+								<label for="Achievement" class="cursor-pointer"
+									>Achievement</label
+								>
+							</div>
+						</div>
+					</label>
+					<button type="submit" class="form-submit-btn btn center-content-flex">
+						Create Credential
+					</button>
+					<div id="txStatus" class="status"></div>
+				</form>
+			</div>
+		</div>
 
-    <script>
-      userType = "issuer";
+		<script>
+			userType = "issuer";
 
-      function handleShowForm() {
-        document
-          .getElementById("nav-create-cred")
-          .classList.toggle("nav-btn-active");
-        document
-          .getElementById("nav-transfer-cred")
-          .classList.remove("nav-btn-active");
-        document
-          .getElementById("nav-see-cred")
-          .classList.remove("nav-btn-active");
-        document
-          .getElementById("credentials-container")
-          .classList.remove("show");
-        document.getElementById("employee-container").classList.remove("show");
-        document.getElementById("credentialForm").classList.toggle("show");
-      }
+			function handleShowForm() {
+				document
+					.getElementById("nav-create-cred")
+					.classList.toggle("nav-btn-active");
+				document
+					.getElementById("nav-transfer-cred")
+					.classList.remove("nav-btn-active");
+				document
+					.getElementById("nav-see-cred")
+					.classList.remove("nav-btn-active");
+				document
+					.getElementById("credentials-container")
+					.classList.remove("show");
+				document.getElementById("employee-container").classList.remove("show");
+				document.getElementById("credentialForm").classList.toggle("show");
+			}
 
-      function handleSeeCredentials() {
-        document
-          .getElementById("nav-see-cred")
-          .classList.toggle("nav-btn-active");
-        document
-          .getElementById("nav-transfer-cred")
-          .classList.remove("nav-btn-active");
-        document
-          .getElementById("nav-create-cred")
-          .classList.remove("nav-btn-active");
-        document.getElementById("credentialForm").classList.remove("show");
-        document.getElementById("employee-container").classList.remove("show");
-        getCredentialsByIssuer(userAccount)
-          .then((ids) => handleViewCredential(ids[0]))
-          .then(
-            document
-              .getElementById("credentials-container")
-              .classList.toggle("show")
-          );
-      }
+			function handleSeeCredentials() {
+				document
+					.getElementById("nav-see-cred")
+					.classList.toggle("nav-btn-active");
+				document
+					.getElementById("nav-transfer-cred")
+					.classList.remove("nav-btn-active");
+				document
+					.getElementById("nav-create-cred")
+					.classList.remove("nav-btn-active");
+				document.getElementById("credentialForm").classList.remove("show");
+				document.getElementById("employee-container").classList.remove("show");
+				getCredentialsByIssuer(userAccount)
+					.then((ids) => handleViewCredential(ids[0]))
+					.then(
+						document
+							.getElementById("credentials-container")
+							.classList.toggle("show")
+					);
+			}
 
-      function handleTransferCredentials() {
-        document
-          .getElementById("nav-transfer-cred")
-          .classList.toggle("nav-btn-active");
-        document
-          .getElementById("nav-see-cred")
-          .classList.remove("nav-btn-active");
-        document
-          .getElementById("nav-create-cred")
-          .classList.remove("nav-btn-active");
-        document.getElementById("credentialForm").classList.remove("show");
-        document
-          .getElementById("credentials-container")
-          .classList.remove("show");
-        document.getElementById("employee-container").classList.toggle("show");
-      }
+			function handleTransferCredentials() {
+				document
+					.getElementById("nav-transfer-cred")
+					.classList.toggle("nav-btn-active");
+				document
+					.getElementById("nav-see-cred")
+					.classList.remove("nav-btn-active");
+				document
+					.getElementById("nav-create-cred")
+					.classList.remove("nav-btn-active");
+				document.getElementById("credentialForm").classList.remove("show");
+				document
+					.getElementById("credentials-container")
+					.classList.remove("show");
+				document.getElementById("employee-container").classList.toggle("show");
+			}
 
-      function resetForm() {
-        document.getElementById("credentialForm").reset();
-      }
+			function resetForm() {
+				document.getElementById("credentialForm").reset();
+			}
 
-      function handleSubmit() {
-        const name = document.getElementById("name").value;
-        const dateOfIssue = document.getElementById("dateOfIssue").value;
-        const expirationDate = document.getElementById("expirationDate").value;
-        const description = document.getElementById("description").value;
-        const credentialUrl = document.getElementById("credentialUrl").value;
-        const credentialType = document.querySelector(
-          'input[name="credentialType"]:checked'
-        ).value;
+			function handleSubmit() {
+				const name = document.getElementById("name").value;
+				const dateOfIssue = document.getElementById("dateOfIssue").value;
+				const expirationDate = document.getElementById("expirationDate").value;
+				const description = document.getElementById("description").value;
+				const credentialUrl = document.getElementById("credentialUrl").value;
+				const credentialType = document.querySelector(
+					'input[name="credentialType"]:checked'
+				).value;
 
-        createCredential(
-          name,
-          dateToBigInt(dateOfIssue),
-          dateToBigInt(expirationDate),
-          description,
-          credentialUrl,
-          credentialType
-        );
+				createCredential(
+					name,
+					dateToBigInt(dateOfIssue),
+					dateToBigInt(expirationDate),
+					description,
+					credentialUrl,
+					credentialType
+				);
 
-        resetForm();
-      }
+				resetForm();
+			}
 
-      document
-        .getElementById("credentialForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-          handleSubmit();
-        });
+			document
+				.getElementById("credentialForm")
+				.addEventListener("submit", function (event) {
+					event.preventDefault();
+					handleSubmit();
+				});
 
-      document.getElementById("expirationDate").min = new Date()
-        .toISOString()
-        .split("T")[0];
+			document.getElementById("expirationDate").min = new Date()
+				.toISOString()
+				.split("T")[0];
 
-      function transfer(account, credentialId) {
-        $("#transfer-status").text(
-          "Vezi ca dureaza seful meu transferul asta greu ca pumnul meu!"
-        );
-        credentials.methods
-          .transferFrom(userAccount, account, credentialId)
-          .send({ from: userAccount })
-          .on("receipt", function (receipt) {
-            $("#transfer-status").text(
-              "Successfully transferred credential to " + account + "!"
-            );
-          })
-          .on("error", function (error) {
-            $("#transfer-status").text(error);
-          });
-      }
+			function transfer(account, credentialId) {
+				$("#transfer-status").text(
+					"Vezi ca dureaza seful meu transferul asta greu ca pumnul meu!"
+				);
+				credentials.methods
+					.transferFrom(userAccount, account, credentialId)
+					.send({ from: userAccount })
+					.on("receipt", function (receipt) {
+						$("#transfer-status").text(
+							"Successfully transferred credential to " + account + "!"
+						);
+					})
+					.on("error", function (error) {
+						$("#transfer-status").text(error);
+					});
+			}
 
-      function dateToBigInt(date) {
-        return Math.floor(new Date(date).getTime() / 1000);
-      }
+			function dateToBigInt(date) {
+				return Math.floor(new Date(date).getTime() / 1000);
+			}
 
-      async function createCredential(
-        name,
-        dateOfIssue,
-        expirationDate,
-        description,
-        credentialUrl,
-        credentialType
-      ) {
-        $("#txStatus").text(
-          "Creating new credential on the blockchain. This may take a while..."
-        );
+			async function createCredential(
+				name,
+				dateOfIssue,
+				expirationDate,
+				description,
+				credentialUrl,
+				credentialType
+			) {
+				$("#txStatus").text(
+					"Creating new credential on the blockchain. This may take a while..."
+				);
 
-        console.log(
-          name,
-          dateOfIssue,
-          expirationDate,
-          description,
-          credentialUrl,
-          credentialType
-        );
-        return credentials.methods
-          .createCredential(
-            name,
-            credentialType,
-            dateOfIssue,
-            expirationDate,
-            description,
-            credentialUrl
-          )
-          .send({ from: userAccount })
-          .on("receipt", function (receipt) {
-            $("#txStatus").text("Successfully created " + name + "!");
-            getCredentialsByIssuer(userAccount).then(displayCredentials);
-          })
-          .on("error", function (error) {
-            $("#txStatus").text(error);
-          });
-      }
+				console.log(
+					name,
+					dateOfIssue,
+					expirationDate,
+					description,
+					credentialUrl,
+					credentialType
+				);
+				return credentials.methods
+					.createCredential(
+						name,
+						credentialType,
+						dateOfIssue,
+						expirationDate,
+						description,
+						credentialUrl
+					)
+					.send({ from: userAccount })
+					.on("receipt", function (receipt) {
+						$("#txStatus").text("Successfully created " + name + "!");
+					})
+					.on("error", function (error) {
+						$("#txStatus").text(error);
+					});
+			}
 
-      function getCredentialsByIssuer(owner) {
-        return credentials.methods.getCredentialsByIssuer(owner).call();
-      }
+			function getCredentialsByIssuer(owner) {
+				return credentials.methods.getCredentialsByIssuer(owner).call();
+			}
 
-      loadApp();
-    </script>
-  </body>
+			loadApp();
+		</script>
+	</body>
 </html>

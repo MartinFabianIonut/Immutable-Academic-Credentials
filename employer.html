@@ -1,65 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Employer front-end</title>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-    ></script>
-    <script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="web3.min.js"
-    ></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="AcademicCredentials_abi.js"
-    ></script>
-    <script src="AcademicCredentialsAddress.js"></script>
-    <script src="utils.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <div class="navigation">
-        <div class="title">
-          <h1><a href="index.html" id="home">Academic Credentials</a></h1>
-          <h2>Employer</h2>
-        </div>
-      </div>
-      <div class="content center-content-flex">
-        <div
-          class="general-form center-content-flex see-credentials credentials-container show"
-        >
-          <h2>Employee</h2>
-          <select
-            id="employees"
-            class="select-form"
-            onchange="getCredentialsByOwner(document.getElementById('employees').value).then(displayCredentials)"
-          ></select>
-          <h2>Credentials</h2>
-          <select
-            id="credentials"
-            class="select-form"
-            onchange="handleViewCredential(document.getElementById('credentials').value)"
-          ></select>
-          <div id="credential-details"></div>
-        </div>
-      </div>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Employer front-end</title>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+		></script>
+		<script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="web3.min.js"
+		></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="AcademicCredentials_abi.js"
+		></script>
+		<script src="AcademicCredentialsAddress.js"></script>
+		<script src="utils.js"></script>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="credential.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<div class="page">
+			<div class="navigation">
+				<div class="title">
+					<h1><a href="index.html" id="home">Academic Credentials</a></h1>
+					<h2>Employer</h2>
+				</div>
+			</div>
+			<div class="content center-content-flex">
+				<div
+					class="general-form center-content-flex see-credentials credentials-container show"
+				>
+					<h2>Employee</h2>
+					<select
+						id="employees"
+						class="select-form"
+						onchange="getCredentialsByOwner(document.getElementById('employees').value).then(displayCredentials)"
+					></select>
+					<h2>Credentials</h2>
+					<select
+						id="credentials"
+						class="select-form"
+						onchange="handleViewCredential(document.getElementById('credentials').value)"
+					></select>
+					<div id="credential-container" class="credential-container"></div>
+				</div>
+			</div>
+		</div>
 
-    <script>
-      userType = "employer";
+		<script>
+			userType = "employer";
 
-      function getCredentialsByOwner(owner) {
-        return credentials.methods.getCredentialsByOwner(owner).call();
-      }
+			function getCredentialsByOwner(owner) {
+				return credentials.methods.getCredentialsByOwner(owner).call();
+			}
 
-      loadApp();
-    </script>
-  </body>
+			loadApp();
+		</script>
+	</body>
 </html>

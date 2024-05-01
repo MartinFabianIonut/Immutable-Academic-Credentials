@@ -1,75 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Employee front-end</title>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-    ></script>
-    <script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="web3.min.js"
-    ></script>
-    <script
-      language="javascript"
-      type="text/javascript"
-      src="AcademicCredentials_abi.js"
-    ></script>
-    <script src="AcademicCredentialsAddress.js"></script>
-    <script src="utils.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <div class="navigation">
-        <div class="title">
-          <h1><a href="index.html" id="home">Academic Credentials</a></h1>
-          <h2>Employee</h2>
-        </div>
-      </div>
-      <div class="content center-content-flex">
-        <div
-          id="credentials-container"
-          class="general-form center-content-flex see-credentials credentials-container show"
-        >
-          <h2>Credential Name & Date</h2>
-          <select
-            id="credentials"
-            class="select-form"
-            onchange="handleViewCredential(document.getElementById('credentials').value)"
-          ></select>
-          <div id="credential-details"></div>
-          <button
-            class="rank-btn btn"
-            onclick="handleUpgradeRank(document.getElementById('credentials').value)"
-          >
-            Upgrade Rank
-          </button>
-        </div>
-      </div>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Employee front-end</title>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+		></script>
+		<script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="web3.min.js"
+		></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="AcademicCredentials_abi.js"
+		></script>
+		<script src="AcademicCredentialsAddress.js"></script>
+		<script src="utils.js"></script>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="credential.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<div class="page">
+			<div class="navigation">
+				<div class="title">
+					<h1><a href="index.html" id="home">Academic Credentials</a></h1>
+					<h2>Employee</h2>
+				</div>
+			</div>
+			<div class="content center-content-flex">
+				<div
+					id="credentials-container"
+					class="general-form center-content-flex see-credentials credentials-container show"
+				>
+					<h2>Credential Name & Date</h2>
+					<select
+						id="credentials"
+						class="select-form"
+						onchange="handleViewCredential(document.getElementById('credentials').value)"
+					></select>
+					<div id="credential-container" class="credential-container"></div>
+					<button id="rank-upgrade-btn" class="rank-btn btn">
+						Upgrade Rank
+					</button>
+				</div>
+			</div>
+		</div>
 
-    <script>
-      userType = "employee";
+		<script>
+			userType = "employee";
 
-      function getCredentialsByOwner(owner) {
-        return credentials.methods.getCredentialsByOwner(owner).call();
-      }
+			function getCredentialsByOwner(owner) {
+				return credentials.methods.getCredentialsByOwner(owner).call();
+			}
 
-      function handleUpgradeRank(credentialId) {
-        credentials.methods
-          .changeRank(credentialId)
-          .send({ from: userAccount, value: 0.002 * 10 ** 18 })
-          .then(() => {
-            getCredentialsByOwner(userAccount).then(displayCredentials);
-          });
-      }
+			async function getCurrentRank(credentialId) {
+				const credential = await credentials.methods
+					.credentials(credentialId)
+					.call();
+				return credential.rank; // Assuming the rank is stored in this way
+			}
 
-      loadApp();
-    </script>
-  </body>
+			async function getNextRankFee(currentRank) {
+				return await credentials.methods.rankingFees(currentRank).call();
+			}
+
+			async function handleUpgradeRank(credentialId, fee) {
+				credentials.methods
+					.changeRank(credentialId)
+					.send({ from: userAccount, value: fee })
+					.then(() => {
+						alert("Rank upgraded successfully!");
+						getCredentialsByOwner(userAccount).then(displayCredentials);
+					})
+					.catch((error) => {
+						console.error("Error upgrading rank:", error);
+						alert("Failed to upgrade rank.");
+					});
+			}
+
+			// Event listener or some mechanism to select a credential and update button
+			document
+				.getElementById("credentials")
+				.addEventListener("change", function () {
+					const credentialId = this.value;
+					if (credentialId) {
+						updateUpgradeButton(credentialId);
+					}
+				});
+
+			loadApp();
+		</script>
+	</body>
 </html>
