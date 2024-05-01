@@ -62,10 +62,6 @@ contract CredentialFactory is Ownable {
     mapping(address => uint16) ownerCredentialCount; // Mapping from owner address to count of owned credentials
     mapping(address => uint16) issuerCredentialCount; // Mapping from owner address to count of owned credentials
 
-    // Mapping for count of credential types owned by each address
-    mapping(address => mapping(uint16 => uint16))
-        public ownerCredentialTypeCount;
-
     // Mapping for count of credential ranks owned by each address
     mapping(address => mapping(uint16 => uint16))
         public ownerCredentialRankCount;

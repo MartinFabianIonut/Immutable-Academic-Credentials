@@ -17,19 +17,6 @@ contract CredentialOwnership is CredentialHelper, ERC721 {
     }
 
     /**
-     * @dev Returns the number of credentials of a specific type owned by a specific address.
-     * @param _owner The owner address to check
-     * @param _type The type of credential to check
-     * @return uint16 representing the number of credentials of a specific type owned by the passed address
-     */
-    function balanceOfCredentialType(
-        address _owner,
-        uint16 _type
-    ) external view returns (uint16) {
-        return ownerCredentialTypeCount[_owner][_type];
-    }
-
-    /**
      * @dev Returns the owner of the credential with the given ID.
      * @param _tokenId The ID of the credential to query the owner of
      * @return the owner of the credential
@@ -48,10 +35,6 @@ contract CredentialOwnership is CredentialHelper, ERC721 {
      */
     function _transfer(address _from, address _to, uint256 _tokenId) private {
         ownerCredentialCount[_to] = ownerCredentialCount[_to].add(1);
-        uint16 credentialType = uint16(credentials[_tokenId].credentialType);
-        ownerCredentialTypeCount[_to][
-            credentialType
-        ] = ownerCredentialTypeCount[_to][credentialType].add(1);
         uint16 credentialRank = uint16(credentials[_tokenId].rank);
         ownerCredentialRankCount[_to][
             credentialRank

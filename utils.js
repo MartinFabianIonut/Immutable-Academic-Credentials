@@ -15,7 +15,7 @@ async function startApp() {
     await ethereum.enable();
   }
 
-  function getAccounts(callback) {
+  async function getAccounts(callback) {
     web3.eth.getAccounts((error, result) => {
       if (error) {
         console.log(error);
@@ -24,63 +24,58 @@ async function startApp() {
       }
     });
   }
+  async function updateEmployeeDropdown(accounts, rankNames) {
+    $("#employees").empty();
+    const sortedAccounts = await getSortedAccounts(accounts);
+    sortedAccounts.forEach(account => {
+      let description = account.counts.map((count, index) => count > 0 ? `${count} ${rankNames[index]}` : '').filter(text => text).reverse().join(", ");
+      $("#employees").append(`<option value="${account.account}">${account.account} ${description ? `(${description})` : ''}</option>`);
+    });
+  }
 
-  getAccounts(function (result) {
-    userAccount = result[0];
-    if (userType == "issuer") {
-      ownersAccounts = result.slice(1);
-      $("#employees").empty();
-      for (const account of ownersAccounts) {
-        $("#employees").append(
-          `<option value="${account}">${account}</option>`
-        );
-      }
+  async function displayCredentialsForUser(userType, accounts) {
+    if (userType === "issuer") {
       getCredentialsByIssuer(userAccount).then(displayCredentials);
-    } else if (userType == "employer") {
-      ownersAccounts = result.slice(1);
-      $("#employees").empty();
-      // TODO: SORT BY RANK
-      for (const account of ownersAccounts) {
-        $("#employees").append(
-          `<option value="${account}">${account}</option>`
-        );
-      }
-      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials);
+    } else {
+      getCredentialsByOwner(accounts[0]).then(displayCredentials); // Assuming first account in list
+    }
+  }
+
+  function handleAccountsChanged(accounts) {
+    userAccount = accounts[0];
+    ownersAccounts = accounts.slice(1);
+    const rankNames = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"];
+
+    if (userType === "issuer") {
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
+    } else if (userType === "employer") {
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
+    } else {
+      getCredentialsByOwner(userAccount).then(displayCredentials);
+    }
+  }
+
+  // Get accounts initially and setup listeners
+  getAccounts(async function (result) {
+    userAccount = result[0];
+    ownersAccounts = result.slice(1);
+    const rankNames = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"];
+
+    if (["issuer", "employer"].includes(userType)) {
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
   });
 
-  window.ethereum.on("accountsChanged", function (accounts) {
-    userAccount = accounts[0];
-    if (userType == "issuer") {
-      ownersAccounts = accounts.slice(1);
-      $("#employees").empty();
-      for (const account of ownersAccounts) {
-        $("#employees").append(
-          `<option value="${account}">${account}</option>`
-        );
-      }
-      getCredentialsByIssuer(userAccount).then(displayCredentials);
-    } else if (userType == "employer") {
-      ownersAccounts = accounts.slice(1);
-      $("#employees").empty();
-      // TODO: SORT BY RANK
-      for (const account of ownersAccounts) {
-        $("#employees").append(
-          `<option value="${account}">${account}</option>`
-        );
-      }
-      getCredentialsByOwner(ownersAccounts[0]).then(displayCredentials)
-    } else {
-      getCredentialsByOwner(userAccount).then(displayCredentials);
-    }
+  // Listen for account changes
+  window.ethereum.on("accountsChanged", (accounts) => {
+    handleAccountsChanged(accounts);
   });
 
   credentials.events
     .NewCredential({ filter: { issuer: userAccount } })
-    .on("data", function (event) {
-      let data = event.returnValues;
+    .on("data", function () {
       if (userType == "issuer") {
         getCredentialsByIssuer(userAccount).then(displayCredentials);
       } else {
@@ -91,8 +86,7 @@ async function startApp() {
 
   credentials.events
     .Transfer({ filter: { _from: userAccount } })
-    .on("data", function (event) {
-      let data = event.returnValues;
+    .on("data", function () {
       if (userType == "issuer") {
         getCredentialsByIssuer(userAccount).then(displayCredentials);
       } else {
@@ -122,6 +116,35 @@ async function getSortedCredentials(ids) {
   return sortedCredentials.sort((a, b) => b.details.rank - a.details.rank);
 }
 
+getSortedAccounts = async (accounts) => {
+  let sortedAccounts = [];
+  for (const account of accounts) {
+    let counts = [];
+    for (i = 0; i < 5; i++) {
+      const numberOfCredentials = await getCredentialRankCount(account, i);
+      counts.push(numberOfCredentials);
+    }
+    sortedAccounts.push({ account, counts });
+  }
+  // Sort the accounts based on ranks from most important (index 4) to least important (index 0)
+  sortedAccounts.sort((a, b) => {
+    for (let i = 4; i >= 0; i--) {  // start comparing from the most valuable rank
+      if (a.counts[i] > b.counts[i]) {
+        return -1;  // a should come before b
+      } else if (a.counts[i] < b.counts[i]) {
+        return 1;  // b should come before a
+      }
+    }
+    return 0;  // if all ranks are the same, consider them equal in terms of sorting
+  });
+
+  return sortedAccounts;
+}
+
+function getCredentialRankCount(account, rank) {
+  return credentials.methods.ownerCredentialRankCount(account, rank).call();
+}
+
 function displayCredentials(ids) {
   getSortedCredentials(ids).then(function (sortedCredentials) {
     $("#credentials").empty();
@@ -147,15 +170,15 @@ function displayCredentials(ids) {
           });
       }
     }
-    updateUpgradeButton(sortedCredentials[0].id);
+    if (userType == "employee") {
+      updateUpgradeButton(sortedCredentials[0].id);
+    }
     if (ids.length > 0) {
       handleViewCredential(sortedCredentials[0].id);
     } else {
       $("#credential-container").empty();
     }
   });
-
-
 }
 
 function handleViewCredential(id) {
@@ -168,44 +191,27 @@ function handleViewCredential(id) {
           <br /><br />
           <div class="rank ${rankToString(credential.rank).toLowerCase()}">${rankToString(credential.rank)} Level</div>
         </div>
-
         <div class="info ${typeToString(
         credential.credentialType
       ).toLowerCase()}">
-              <p>
-									Description:
-									<span
-										>${credential.description}</span
-									>
-								</p>
-								<p>
-									Credential URL:
-									<a href="${credential.credentialUrl
-      }" class="credential-url"
-                              >${credential.credentialUrl
-      }</a>
-								</p>
-								<div class="dates">
-									<p>Issue: <span>${intToDate(
-        credential.dateIssued
-      )}</span></p>                                                          
-									<p>Expiration: <span>${intToDate(
-        credential.expirationDate
-      )}</span></p>
-								</div>
-                </div>
-                <div class="footer">
-                  <p class="type">
-                    Credential Type: <span>${typeToString(
-        credential.credentialType
-      )}</span>
-                  </p>
-                </div>
-              
-              </div>
-
-              </div>
-              `
+          <p>
+              <span>${credential.description}</span>
+          </p>
+          <p>
+              Credential URL:
+              <a href="${credential.credentialUrl}" class="credential-url">${credential.credentialUrl}</a>
+          </p>
+          <div class="dates">
+            <p>Issue: <span>${intToDate(credential.dateIssued)}</span></p>                                                          
+            <p>Expiration: <span>${intToDate(credential.expirationDate)}</span></p>
+          </div>
+        </div>
+          <div class="footer">
+            <p class="type">Credential Type: <span>${typeToString(credential.credentialType)}</span>
+            </p>
+          </div>
+        </div>
+      </div>`
     );
   });
 }

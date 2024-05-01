@@ -96,29 +96,6 @@ var AcademicCredentialABI = [
     "constant": true,
     "inputs": [
       {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_type",
-        "type": "uint16"
-      }
-    ],
-    "name": "balanceOfCredentialType",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
         "name": "_issuer",
         "type": "address"
       }
@@ -297,29 +274,6 @@ var AcademicCredentialABI = [
       {
         "name": "",
         "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "address"
-      },
-      {
-        "name": "",
-        "type": "uint16"
-      }
-    ],
-    "name": "ownerCredentialTypeCount",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16"
       }
     ],
     "payable": false,
