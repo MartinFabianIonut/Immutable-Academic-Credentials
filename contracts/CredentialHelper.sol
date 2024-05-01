@@ -24,14 +24,11 @@ contract CredentialHelper is CredentialFactory {
     }
 
     /**
-     * @dev This modifier checks if the sender is the owner of the credential or the issuer of the credential.
-     * @param _credentialId The ID of the credential to check the owner of or the issuer of.
+     * @dev This modifier checks if the sender is the owner of the credential.
+     * @param _credentialId The ID of the credential to check the owner of.
      */
-    modifier onlyIssuerOrOwnerOf(uint _credentialId) {
-        require(
-            msg.sender == credentialToIssuer[_credentialId] ||
-                msg.sender == credentialToOwner[_credentialId]
-        );
+    modifier onlyOwnerOf(uint _credentialId) {
+        require(msg.sender == credentialToOwner[_credentialId]);
         _;
     }
 
@@ -145,12 +142,7 @@ contract CredentialHelper is CredentialFactory {
      */
     function changeRank(
         uint _credentialId
-    )
-        external
-        payable
-        onlyIssuerOrOwnerOf(_credentialId)
-        canChangeRank(_credentialId)
-    {
+    ) external payable onlyOwnerOf(_credentialId) canChangeRank(_credentialId) {
         address owner = credentialToOwner[_credentialId];
 
         Credential storage credential = credentials[_credentialId];

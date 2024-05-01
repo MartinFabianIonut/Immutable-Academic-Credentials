@@ -99,7 +99,10 @@ async function startApp() {
 async function updateUpgradeButton(credentialId) {
   const currentRank = await getCurrentRank(credentialId);
   const nextRankFee = await getNextRankFee(currentRank);
-
+  if (nextRankFee == 0) {
+    document.getElementById("rank-upgrade-btn").style.display = "none";
+    return;
+  }
   const nextRankFeeInEther = nextRankFee / 10 ** 18;
   const button = document.getElementById("rank-upgrade-btn");
   button.innerHTML = `Upgrade Rank<br>(Fee: ${nextRankFeeInEther} ETH)`;

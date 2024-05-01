@@ -32,25 +32,10 @@ contract("AcademicCredentials", (accounts) => {
         await utils.shouldThrow(contractInstance.createCredential(credentialNames[0], "Wrong Credential Type", datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice }));
     });
     context("who can change the rank of a credential", async () => {
-        it("the issuer should be able to change the rank of a credential", async () => {
+        it("the issuer should not be able to change the rank of a credential", async () => {
             let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
             const credentialId = result.logs[0].args.credentialId.toNumber();
-            result = await contractInstance.changeRank(credentialId, { from: alice });
-            assert.equal(result.logs[0].args.newRank, 1);
-        });
-        it("the issuer should be able to change the rank of a credential to any rank", async () => {
-            let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
-            const credentialId = result.logs[0].args.credentialId.toNumber();
-            result = await contractInstance.setRankByIssuer(credentialId, 3, { from: alice });
-            assert.equal(result.logs[0].args.newRank, 3);
-        });
-        it("the issuer should not be able to change the rank of a credential that does not exist", async () => {
-            await utils.shouldThrow(contractInstance.setRankByIssuer(1, 1, { from: alice }));
-        });
-        it("the issuer should not be able to change the rank of a credential to a rank that is out of bounds (>= 4)", async () => {
-            const result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
-            const credentialId = result.logs[0].args.credentialId.toNumber();
-            await utils.shouldThrow(contractInstance.setRankByIssuer(credentialId, 4, { from: alice }));
+            await utils.shouldThrow(contractInstance.changeRank(credentialId, { from: alice }));
         });
         it("the owner should be able to change the rank of a credential to a higher one", async () => {
             let result = await contractInstance.createCredential(credentialNames[0], credentialTypes[0], datesOfIssue[0], expirationDates[0], descriptions[0], credentialUrls[0], { from: alice });
@@ -58,8 +43,9 @@ contract("AcademicCredentials", (accounts) => {
             await contractInstance.transferFrom(alice, bob, credentialId, { from: alice });
             const newOwner = await contractInstance.ownerOf(credentialId);
             const { ethers } = require("ethers");
-            const rankingFee = ethers.utils.parseEther("0.002");
+            let rankingFee = ethers.utils.parseEther("0.002");
             await contractInstance.changeRank(credentialId, { from: newOwner, value: rankingFee });
+            rankingFee = ethers.utils.parseEther("0.0035");
             result = await contractInstance.changeRank(credentialId, { from: newOwner, value: rankingFee });
             assert.equal(result.logs[0].args.newRank, 2);
         });
