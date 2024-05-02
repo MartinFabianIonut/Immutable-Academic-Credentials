@@ -130,7 +130,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.4.22 <0.9.0;\r\n\r\ncontract ERC721 {\r\n    event Transfer(\r\n        address indexed _from,\r\n        address indexed _to,\r\n        uint256 indexed _tokenId\r\n    );\r\n    event Approval(\r\n        address indexed _owner,\r\n        address indexed _approved,\r\n        uint256 indexed _tokenId\r\n    );\r\n\r\n    function balanceOf(address _owner) external view returns (uint256);\r\n    function ownerOf(uint256 _tokenId) external view returns (address);\r\n    function transferFrom(\r\n        address _from,\r\n        address _to,\r\n        uint256 _tokenId\r\n    ) external payable;\r\n    function approve(address _approved, uint256 _tokenId) external payable;\r\n}\r\n",
-  "sourcePath": "C:\\GIT\\Immutable-Academic-Credentials\\contracts\\ERC721.sol",
+  "sourcePath": "D:\\1. Repositories\\Immutable-Academic-Credentials\\contracts\\ERC721.sol",
   "ast": {
     "absolutePath": "project:/contracts/ERC721.sol",
     "exportedSymbols": {
@@ -1379,7 +1379,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-05-01T22:06:29.319Z",
+  "updatedAt": "2024-05-02T06:08:28.165Z",
   "devdoc": {
     "methods": {}
   },

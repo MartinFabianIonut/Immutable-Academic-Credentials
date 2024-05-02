@@ -27,9 +27,19 @@ async function startApp() {
   async function updateEmployeeDropdown(accounts, rankNames) {
     $("#employees").empty();
     const sortedAccounts = await getSortedAccounts(accounts);
-    sortedAccounts.forEach(account => {
-      let description = account.counts.map((count, index) => count > 0 ? `${count} ${rankNames[index]}` : '').filter(text => text).reverse().join(", ");
-      $("#employees").append(`<option value="${account.account}">${account.account} ${description ? `(${description})` : ''}</option>`);
+    sortedAccounts.forEach((account) => {
+      let description = account.counts
+        .map((count, index) =>
+          count > 0 ? `${count} ${rankNames[index]}` : ""
+        )
+        .filter((text) => text)
+        .reverse()
+        .join(", ");
+      $("#employees").append(
+        `<option value="${account.account}">${account.account} ${
+          description ? `(${description})` : ""
+        }</option>`
+      );
     });
   }
 
@@ -47,9 +57,13 @@ async function startApp() {
     const rankNames = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"];
 
     if (userType === "issuer") {
-      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() =>
+        displayCredentialsForUser(userType, ownersAccounts)
+      );
     } else if (userType === "employer") {
-      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() =>
+        displayCredentialsForUser(userType, ownersAccounts)
+      );
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
@@ -62,7 +76,9 @@ async function startApp() {
     const rankNames = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"];
 
     if (["issuer", "employer"].includes(userType)) {
-      updateEmployeeDropdown(ownersAccounts, rankNames).then(() => displayCredentialsForUser(userType, ownersAccounts));
+      updateEmployeeDropdown(ownersAccounts, rankNames).then(() =>
+        displayCredentialsForUser(userType, ownersAccounts)
+      );
     } else {
       getCredentialsByOwner(userAccount).then(displayCredentials);
     }
@@ -128,18 +144,19 @@ getSortedAccounts = async (accounts) => {
   }
   // Sort the accounts based on ranks from most important (index 4) to least important (index 0)
   sortedAccounts.sort((a, b) => {
-    for (let i = 4; i >= 0; i--) {  // start comparing from the most valuable rank
+    for (let i = 4; i >= 0; i--) {
+      // start comparing from the most valuable rank
       if (a.counts[i] > b.counts[i]) {
-        return -1;  // a should come before b
+        return -1; // a should come before b
       } else if (a.counts[i] < b.counts[i]) {
-        return 1;  // b should come before a
+        return 1; // b should come before a
       }
     }
-    return 0;  // if all ranks are the same, consider them equal in terms of sorting
+    return 0; // if all ranks are the same, consider them equal in terms of sorting
   });
 
   return sortedAccounts;
-}
+};
 
 function getCredentialRankCount(account, rank) {
   return credentials.methods.ownerCredentialRankCount(account, rank).call();
@@ -149,12 +166,15 @@ function displayCredentials(ids) {
   getSortedCredentials(ids).then(function (sortedCredentials) {
     $("#credentials").empty();
     $("#credentials-transfer").empty();
-    console.log("Sorted credentials:", sortedCredentials);
     for (const credential of sortedCredentials) {
       $("#credentials").append(
-        `<option id="${credential.id}" value="${credential.id
-        }" class="credential cursor-pointer">${credential.details.name
-        } - ${rankToString(credential.details.rank)} ${typeToString(credential.details.credentialType).toLowerCase()}</option>`
+        `<option id="${credential.id}" value="${
+          credential.id
+        }" class="credential cursor-pointer">${
+          credential.details.name
+        } - ${rankToString(credential.details.rank)} ${typeToString(
+          credential.details.credentialType
+        ).toLowerCase()}</option>`
       );
       if (userType == "issuer") {
         credentials.methods
@@ -163,7 +183,8 @@ function displayCredentials(ids) {
           .then(function (owner) {
             if (owner == UNDEFINED_ADDRESS) {
               $("#credentials-transfer").append(
-                `<option value="${credential.id}">${credential.details.name
+                `<option value="${credential.id}">${
+                  credential.details.name
                 } ${intToDate(credential.details.dateIssued)}</option>`
               );
             }
@@ -185,29 +206,41 @@ function handleViewCredential(id) {
   $("#credential-container").empty();
   getCredentialDetails(id).then(function (credential) {
     $("#credential-container").append(
-      `<div class="diploma ${typeToString(credential.credentialType).toLowerCase()}">
+      `<div class="diploma ${typeToString(
+        credential.credentialType
+      ).toLowerCase()}">
         <div class="header">
           <h1>${credential.name}</h1>
           <br /><br />
-          <div class="rank ${rankToString(credential.rank).toLowerCase()}">${rankToString(credential.rank)} Level</div>
+          <div class="rank ${rankToString(
+            credential.rank
+          ).toLowerCase()}">${rankToString(credential.rank)} Level</div>
         </div>
         <div class="info ${typeToString(
-        credential.credentialType
-      ).toLowerCase()}">
+          credential.credentialType
+        ).toLowerCase()}">
           <p>
               <span>${credential.description}</span>
           </p>
           <p>
               Credential URL:
-              <a href="${credential.credentialUrl}" class="credential-url">${credential.credentialUrl}</a>
+              <a href="${credential.credentialUrl}" class="credential-url">${
+        credential.credentialUrl
+      }</a>
           </p>
           <div class="dates">
-            <p>Issue: <span>${intToDate(credential.dateIssued)}</span></p>                                                          
-            <p>Expiration: <span>${intToDate(credential.expirationDate)}</span></p>
+            <p>Issue: <span>${intToDate(
+              credential.dateIssued
+            )}</span></p>                                                          
+            <p>Expiration: <span>${intToDate(
+              credential.expirationDate
+            )}</span></p>
           </div>
         </div>
           <div class="footer">
-            <p class="type">Credential Type: <span>${typeToString(credential.credentialType)}</span>
+            <p class="type">Credential Type: <span>${typeToString(
+              credential.credentialType
+            )}</span>
             </p>
           </div>
         </div>
